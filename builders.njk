@@ -5,13 +5,15 @@ permalink: /builders/
 eleventyExcludeFromCollections: true
 ---
 <header class="page-head">
+  <p class="kicker">Part 4</p>
   <h1>Builders</h1>
-  <p class="lede">Fill in a form. Get a script. Nothing runs in the browser. You copy it, you read it, you run it locally.</p>
+  <p class="lede">Fill in the blanks. Copy the script. Nothing runs in the browser.</p>
 </header>
 
 <div class="card-grid">
   {% for item in collections.builders %}
     <a class="card" href="{{ item.url }}">
+      <p class="kicker">Builder</p>
       <h2>{{ item.data.title }}</h2>
       <p>{{ item.data.summary }}</p>
     </a>

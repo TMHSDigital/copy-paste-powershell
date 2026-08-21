@@ -5,13 +5,15 @@ permalink: /scripts/
 eleventyExcludeFromCollections: true
 ---
 <header class="page-head">
+  <p class="kicker">Part 3</p>
   <h1>Scripts</h1>
-  <p class="lede">Parameterized scripts with <code>-WhatIf</code>. Download them or copy the source. Pass paths in. Never hardcode yours.</p>
+  <p class="lede">Parameterized, with <code>-WhatIf</code>. Download or copy. Pass paths in. Never hardcode yours.</p>
 </header>
 
 <div class="card-grid">
   {% for item in collections.scripts %}
     <a class="card" href="{{ item.url }}">
+      <p class="kicker">{{ item.data.difficulty or "script" }}</p>
       <h2>{{ item.data.title }}</h2>
       <p>{{ item.data.summary }}</p>
     </a>

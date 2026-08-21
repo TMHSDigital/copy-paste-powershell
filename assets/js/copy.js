@@ -35,7 +35,7 @@
   });
 
   document.querySelectorAll("main pre").forEach((pre) => {
-    if (pre.closest(".copy-bar") || pre.querySelector(".copy-on-pre")) {
+    if (pre.closest(".copy-bar") || pre.closest(".terminal") || pre.querySelector(".copy-on-pre")) {
       return;
     }
     if (pre.id === "builder-preview" || pre.id === "script-source") {

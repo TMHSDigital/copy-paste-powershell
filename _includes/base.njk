@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="/assets/vendor/prism.css">
   <link rel="stylesheet" href="/assets/css/site.css">
 </head>
-<body>
+<body class="{% if page.url == '/' %}page-home{% endif %}">
   <a class="skip-link" href="#main">Skip to content</a>
   {% include "header.njk" %}
   <main id="main">

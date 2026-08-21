@@ -10,14 +10,18 @@ layout: base.njk
       <span class="badge">{{ difficulty }}</span>
       <span class="badge badge-quiet">{{ category | categoryLabel }}</span>
       {% if aliases and aliases.length %}
-        <span class="aliases">Aliases: {% for alias in aliases %}<code>{{ alias }}</code>{% if not loop.last %} {% endif %}{% endfor %}</span>
+        <span class="aliases">Aliases {% for alias in aliases %}<code>{{ alias }}</code>{% endfor %}</span>
       {% endif %}
     </p>
   </header>
 
-  <div class="copy-bar">
-    <pre class="command-pre"><code class="language-powershell">{{ command }}</code></pre>
-    <button type="button" class="btn" data-copy="{{ command | e }}">Copy</button>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <span class="terminal-dots" aria-hidden="true"></span>
+      <span class="terminal-title">{{ cmdlet }}</span>
+      <button type="button" class="btn btn-small" data-copy="{{ command | e }}">Copy</button>
+    </div>
+    <pre class="terminal-body command-pre"><span class="prompt">PS&gt;</span> <code class="language-powershell">{{ command }}</code></pre>
   </div>
 
   {% if warning %}
@@ -29,9 +33,9 @@ layout: base.njk
   {% set related = collections.commands | relatedCommands(page.url, topics) %}
   {% if related.length %}
     <h2>Related commands</h2>
-    <ul class="plain-list">
+    <ul class="related-list">
       {% for item in related %}
-        <li><a href="{{ item.url }}"><code>{{ item.data.cmdlet }}</code> - {{ item.data.title }}</a></li>
+        <li><a href="{{ item.url }}"><code>{{ item.data.cmdlet }}</code> {{ item.data.title }}</a></li>
       {% endfor %}
     </ul>
   {% endif %}

@@ -19,13 +19,6 @@ layout: base.njk
     </p>
   </header>
 
-  <p class="toolbar">
-    <button type="button" class="btn" data-copy-target="#script-source">Copy script</button>
-    {% if ps1Name %}
-      <a class="btn btn-secondary" href="{{ page.url }}{{ ps1Name }}" download>Download {{ ps1Name }}</a>
-    {% endif %}
-  </p>
-
   {{ content | safe }}
 
   {% if parameters and parameters.length %}
@@ -55,5 +48,17 @@ layout: base.njk
   {% endif %}
 
   <h2>Source</h2>
-  <pre id="script-source" class="command-pre"><code class="language-powershell">{{ source | highlightPowershell | safe }}</code></pre>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <span class="terminal-dots" aria-hidden="true"></span>
+      <span class="terminal-title">{{ ps1Name or "script.ps1" }}</span>
+      <div class="terminal-actions">
+        <button type="button" class="btn btn-small" data-copy-target="#script-source">Copy</button>
+        {% if ps1Name %}
+          <a class="btn btn-small btn-secondary" href="{{ page.url }}{{ ps1Name }}" download>Download</a>
+        {% endif %}
+      </div>
+    </div>
+    <pre id="script-source" class="terminal-body command-pre"><code class="language-powershell">{{ source | highlightPowershell | safe }}</code></pre>
+  </div>
 </article>

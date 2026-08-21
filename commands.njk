@@ -5,13 +5,20 @@ permalink: /commands/
 eleventyExcludeFromCollections: true
 ---
 <header class="page-head">
+  <p class="kicker">The cheat sheet</p>
   <h1>Commands</h1>
-  <p class="lede">One-liners with the why attached. Click copy, paste into PowerShell, then read the page if something looks weird.</p>
-  <form class="hero-search" role="search">
+  <p class="lede">One-liners plus the why. Copy, paste, then open the page if the result looks wrong.</p>
+  <form class="hero-search hero-search-light" role="search">
     <label class="visually-hidden" for="cmd-q">Filter commands</label>
+    <span class="prompt" aria-hidden="true">PS&gt;</span>
     <input id="cmd-q" type="search" placeholder="Filter by name, alias, or topic" autocomplete="off" data-search-input data-search-scope="command">
   </form>
   <div id="search-results" class="search-results" hidden></div>
+  <nav class="cat-jump" aria-label="Categories">
+    {% for cat in collections.commandCategories %}
+      <a href="#{{ cat.slug }}">{{ cat.label }} <span>{{ cat.count }}</span></a>
+    {% endfor %}
+  </nav>
 </header>
 
 {% for cat in collections.commandCategories %}
@@ -26,6 +33,7 @@ eleventyExcludeFromCollections: true
               <p>{{ item.data.title }}</p>
             </div>
             <div class="cmd-card-copy">
+              <span class="prompt" aria-hidden="true">PS&gt;</span>
               <code>{{ item.data.command }}</code>
               <button type="button" class="btn btn-small" data-copy="{{ item.data.command | e }}">Copy</button>
             </div>

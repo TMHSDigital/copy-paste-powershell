@@ -92,6 +92,12 @@ export default function (eleventyConfig) {
     });
   });
 
+  eleventyConfig.addCollection("featuredCommands", (api) => {
+    return api.getFilteredByGlob(CONTENT_GLOBS.commands)
+      .filter((item) => item.data.featured)
+      .sort(sortByTitle);
+  });
+
   eleventyConfig.addCollection("commandCategories", (api) => {
     const items = api.getFilteredByGlob(CONTENT_GLOBS.commands);
     const counts = new Map();
