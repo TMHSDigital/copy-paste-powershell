@@ -1,0 +1,15 @@
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/">{{ site.title }}</a>
+    <nav class="nav" aria-label="Primary">
+      <a href="/commands/" {% if '/commands/' in page.url %}aria-current="page"{% endif %}>Commands</a>
+      <a href="/scripts/" {% if '/scripts/' in page.url %}aria-current="page"{% endif %}>Scripts</a>
+      <a href="/builders/" {% if '/builders/' in page.url %}aria-current="page"{% endif %}>Builders</a>
+      <a href="/guides/" {% if '/guides/' in page.url %}aria-current="page"{% endif %}>Guides</a>
+    </nav>
+    <form class="header-search" role="search" action="/" method="get">
+      <label class="visually-hidden" for="header-q">Search</label>
+      <input id="header-q" name="q" type="search" placeholder="Search commands" autocomplete="off" data-search-input>
+    </form>
+  </div>
+</header>

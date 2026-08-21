@@ -1,0 +1,4 @@
+{
+  "layout": "script.njk",
+  "permalink": "/scripts/{{ page.fileSlug }}/"
+}

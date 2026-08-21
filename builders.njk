@@ -1,0 +1,19 @@
+---
+layout: base.njk
+title: Builders
+permalink: /builders/
+eleventyExcludeFromCollections: true
+---
+<header class="page-head">
+  <h1>Builders</h1>
+  <p class="lede">Fill in a form. Get a script. Nothing runs in the browser. You copy it, you read it, you run it locally.</p>
+</header>
+
+<div class="card-grid">
+  {% for item in collections.builders %}
+    <a class="card" href="{{ item.url }}">
+      <h2>{{ item.data.title }}</h2>
+      <p>{{ item.data.summary }}</p>
+    </a>
+  {% endfor %}
+</div>

@@ -1,0 +1,19 @@
+---
+layout: base.njk
+title: Scripts
+permalink: /scripts/
+eleventyExcludeFromCollections: true
+---
+<header class="page-head">
+  <h1>Scripts</h1>
+  <p class="lede">Parameterized scripts with <code>-WhatIf</code>. Download them or copy the source. Pass paths in. Never hardcode yours.</p>
+</header>
+
+<div class="card-grid">
+  {% for item in collections.scripts %}
+    <a class="card" href="{{ item.url }}">
+      <h2>{{ item.data.title }}</h2>
+      <p>{{ item.data.summary }}</p>
+    </a>
+  {% endfor %}
+</div>

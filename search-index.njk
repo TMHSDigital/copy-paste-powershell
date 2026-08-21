@@ -1,0 +1,55 @@
+---
+permalink: /search-index.json
+eleventyExcludeFromCollections: true
+---
+{
+  "commands": [
+  {%- for item in collections.commands %}
+    {{ {
+      title: item.data.title,
+      url: item.url,
+      summary: item.data.summary or "",
+      cmdlet: item.data.cmdlet,
+      aliases: item.data.aliases or [],
+      topics: item.data.topics or [],
+      category: item.data.category,
+      difficulty: item.data.difficulty,
+      command: item.data.command,
+      type: "command"
+    } | json | safe }}{% if not loop.last %},{% endif %}
+  {%- endfor %}
+  ],
+  "scripts": [
+  {%- for item in collections.scripts %}
+    {{ {
+      title: item.data.title,
+      url: item.url,
+      summary: item.data.summary or "",
+      topics: item.data.topics or [],
+      type: "script"
+    } | json | safe }}{% if not loop.last %},{% endif %}
+  {%- endfor %}
+  ],
+  "builders": [
+  {%- for item in collections.builders %}
+    {{ {
+      title: item.data.title,
+      url: item.url,
+      summary: item.data.summary or "",
+      topics: item.data.topics or [],
+      type: "builder"
+    } | json | safe }}{% if not loop.last %},{% endif %}
+  {%- endfor %}
+  ],
+  "guides": [
+  {%- for item in collections.guides %}
+    {{ {
+      title: item.data.title,
+      url: item.url,
+      summary: item.data.summary or "",
+      topics: item.data.topics or [],
+      type: "guide"
+    } | json | safe }}{% if not loop.last %},{% endif %}
+  {%- endfor %}
+  ]
+}

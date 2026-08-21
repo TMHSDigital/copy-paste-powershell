@@ -1,0 +1,37 @@
+---
+layout: base.njk
+title: Commands
+permalink: /commands/
+eleventyExcludeFromCollections: true
+---
+<header class="page-head">
+  <h1>Commands</h1>
+  <p class="lede">One-liners with the why attached. Click copy, paste into PowerShell, then read the page if something looks weird.</p>
+  <form class="hero-search" role="search">
+    <label class="visually-hidden" for="cmd-q">Filter commands</label>
+    <input id="cmd-q" type="search" placeholder="Filter by name, alias, or topic" autocomplete="off" data-search-input data-search-scope="command">
+  </form>
+  <div id="search-results" class="search-results" hidden></div>
+</header>
+
+{% for cat in collections.commandCategories %}
+  <section id="{{ cat.slug }}" class="category-block">
+    <h2>{{ cat.label }}</h2>
+    <div class="stack">
+      {% for item in collections.commands %}
+        {% if item.data.category == cat.slug %}
+          <article class="cmd-card" data-search-item>
+            <div>
+              <a href="{{ item.url }}"><code>{{ item.data.cmdlet }}</code></a>
+              <p>{{ item.data.title }}</p>
+            </div>
+            <div class="cmd-card-copy">
+              <code>{{ item.data.command }}</code>
+              <button type="button" class="btn btn-small" data-copy="{{ item.data.command | e }}">Copy</button>
+            </div>
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+{% endfor %}

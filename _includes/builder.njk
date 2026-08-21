@@ -1,0 +1,55 @@
+---
+layout: base.njk
+---
+<article class="prose">
+  <p class="crumb"><a href="/builders/">Builders</a></p>
+  <header class="page-head">
+    <p class="kicker">Builder</p>
+    <h1>{{ title }}</h1>
+    <p class="lede">{{ summary }}</p>
+  </header>
+
+  {{ content | safe }}
+
+  <form id="builder-form" class="builder-form" data-filename="{{ page.fileSlug }}.ps1">
+    {% for field in fields %}
+      <div class="field">
+        {% if field.type == "checkbox" %}
+          <label class="check-label">
+            <input type="checkbox" name="{{ field.name }}" {% if field.default %}checked{% endif %}>
+            {{ field.label }}
+          </label>
+        {% elif field.type == "select" %}
+          <label for="field-{{ field.name }}">{{ field.label }}</label>
+          <select id="field-{{ field.name }}" name="{{ field.name }}">
+            {% for option in field.options %}
+              <option value="{{ option.value }}" {% if option.value == field.default %}selected{% endif %}>{{ option.label }}</option>
+            {% endfor %}
+          </select>
+        {% else %}
+          <label for="field-{{ field.name }}">{{ field.label }}</label>
+          <input
+            id="field-{{ field.name }}"
+            type="{{ field.type or "text" }}"
+            name="{{ field.name }}"
+            value="{{ field.default or "" }}"
+            placeholder="{{ field.placeholder or "" }}"
+            spellcheck="false"
+          >
+        {% endif %}
+        {% if field.help %}
+          <p class="field-help">{{ field.help }}</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </form>
+
+  <h2>Preview</h2>
+  <p class="toolbar">
+    <button type="button" class="btn" data-copy-target="#builder-preview">Copy</button>
+    <button type="button" class="btn btn-secondary" id="builder-download">Download .ps1</button>
+  </p>
+  <pre id="builder-preview" class="command-pre"><code class="language-powershell"></code></pre>
+
+  <script type="application/json" id="builder-spec">{{ { fields: fields, template: template, filename: page.fileSlug + ".ps1" } | json | safe }}</script>
+</article>

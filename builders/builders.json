@@ -1,0 +1,4 @@
+{
+  "layout": "builder.njk",
+  "permalink": "/builders/{{ page.fileSlug }}/"
+}

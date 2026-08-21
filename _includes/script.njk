@@ -1,0 +1,59 @@
+---
+layout: base.njk
+---
+{% set source = page.inputPath | readSiblingPs1 %}
+{% set ps1Name = page.inputPath | siblingPs1Name %}
+<article class="prose">
+  <p class="crumb"><a href="/scripts/">Scripts</a></p>
+  <header class="page-head">
+    <p class="kicker">Script</p>
+    <h1>{{ title }}</h1>
+    <p class="lede">{{ summary }}</p>
+    <p class="meta">
+      {% if difficulty %}<span class="badge">{{ difficulty }}</span>{% endif %}
+      {% if topics %}
+        {% for topic in topics %}
+          <span class="badge badge-quiet">{{ topic }}</span>
+        {% endfor %}
+      {% endif %}
+    </p>
+  </header>
+
+  <p class="toolbar">
+    <button type="button" class="btn" data-copy-target="#script-source">Copy script</button>
+    {% if ps1Name %}
+      <a class="btn btn-secondary" href="{{ page.url }}{{ ps1Name }}" download>Download {{ ps1Name }}</a>
+    {% endif %}
+  </p>
+
+  {{ content | safe }}
+
+  {% if parameters and parameters.length %}
+    <h2>Parameters</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for param in parameters %}
+            <tr>
+              <td><code>-{{ param.name }}</code></td>
+              <td>{{ param.type }}</td>
+              <td>{{ "Yes" if param.required else "No" }}</td>
+              <td>{{ param.description }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+  <h2>Source</h2>
+  <pre id="script-source" class="command-pre"><code class="language-powershell">{{ source | highlightPowershell | safe }}</code></pre>
+</article>

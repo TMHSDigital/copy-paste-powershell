@@ -1,0 +1,4 @@
+{
+  "layout": "command.njk",
+  "permalink": "/commands/{{ page.fileSlug }}/"
+}

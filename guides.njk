@@ -1,0 +1,19 @@
+---
+layout: base.njk
+title: Guides
+permalink: /guides/
+eleventyExcludeFromCollections: true
+---
+<header class="page-head">
+  <h1>Guides</h1>
+  <p class="lede">Read these in order if PowerShell is new. Then steal commands from the catalog.</p>
+</header>
+
+<ol class="guide-steps">
+  {% for item in collections.guides %}
+    <li>
+      <a href="{{ item.url }}">{{ item.data.title }}</a>
+      <p>{{ item.data.summary }}</p>
+    </li>
+  {% endfor %}
+</ol>

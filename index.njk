@@ -1,0 +1,59 @@
+---
+layout: base.njk
+title: PowerShell for Dummies
+description: Copy-paste PowerShell commands, scripts, and builders for beginners.
+---
+<section class="hero">
+  <h1>PowerShell, explained like a human.</h1>
+  <p class="lede">Commands you can copy, scripts you can run, and builders that write the boilerplate. For people who would rather not memorize verb-noun cmdlets.</p>
+  <form class="hero-search" role="search">
+    <label class="visually-hidden" for="home-q">Search</label>
+    <input id="home-q" type="search" placeholder="Try Get-ChildItem, CSV, or ping" autocomplete="off" data-search-input>
+  </form>
+  <div id="search-results" class="search-results" hidden></div>
+</section>
+
+<section>
+  <h2>Start here</h2>
+  <ol class="guide-steps">
+    {% for item in collections.guides %}
+      <li>
+        <a href="{{ item.url }}">{{ item.data.title }}</a>
+        <p>{{ item.data.summary }}</p>
+      </li>
+    {% endfor %}
+  </ol>
+</section>
+
+<section>
+  <h2>Command categories</h2>
+  <div class="card-grid">
+    {% for cat in collections.commandCategories %}
+        <a class="card" href="/commands/#{{ cat.slug }}">
+        <h3>{{ cat.label }}</h3>
+        <p>{{ cat.count }} command{% if cat.count != 1 %}s{% endif %}</p>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section>
+  <h2>Featured commands</h2>
+  <div class="stack">
+    {% for item in collections.commands %}
+      {% if item.data.featured %}
+        <article class="cmd-card">
+          <div>
+            <a href="{{ item.url }}"><code>{{ item.data.cmdlet }}</code></a>
+            <p>{{ item.data.title }}</p>
+          </div>
+          <div class="cmd-card-copy">
+            <code>{{ item.data.command }}</code>
+            <button type="button" class="btn btn-small" data-copy="{{ item.data.command | e }}">Copy</button>
+          </div>
+        </article>
+      {% endif %}
+    {% endfor %}
+  </div>
+  <p><a href="/commands/">All commands</a> · <a href="/scripts/">Scripts</a> · <a href="/builders/">Builders</a></p>
+</section>
