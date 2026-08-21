@@ -35,7 +35,9 @@ Open `http://localhost:8080`. `npm run build` writes the static site to `_site/`
 
 ## Add a guide
 
-Add `guides/your-guide.md` with `title`, `summary`, `order`, and `tags`. Lower `order` sorts earlier.
+1. Add `guides/your-guide.md` with `title`, `summary`, `order`, and `topics`.
+2. Lower `order` sorts earlier.
+3. Use `topics` for keywords. Do not use Eleventy `tags`. `tags` would dump the page into extra collections and fail CI.
 
 ## Do not commit
 

@@ -46,8 +46,10 @@ if (-not (Test-Path -LiteralPath $Path -PathType Container)) {
 }
 
 $cutoff = (Get-Date).AddDays(-1 * $OlderThanDays)
-$candidates = Get-ChildItem -LiteralPath $Path -File -Filter $Filter -Recurse:$Recurse |
-    Where-Object { $_.LastWriteTime -lt $cutoff }
+$candidates = @(
+    Get-ChildItem -LiteralPath $Path -File -Filter $Filter -Recurse:$Recurse |
+        Where-Object { $_.LastWriteTime -lt $cutoff }
+)
 
 if (-not $Apply) {
     Write-Warning "Preview only. $($candidates.Count) file(s) older than $OlderThanDays day(s). Pass -Apply to delete."

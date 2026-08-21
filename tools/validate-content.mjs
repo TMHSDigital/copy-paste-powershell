@@ -41,8 +41,15 @@ function parse(file) {
   return matter(fs.readFileSync(file, "utf8"));
 }
 
+function forbidEleventyTags(file, data) {
+  if (Object.prototype.hasOwnProperty.call(data, "tags")) {
+    errors.push(`${path.relative(root, file)}: use 'topics' for keywords, not Eleventy 'tags'`);
+  }
+}
+
 for (const file of listMarkdown(path.join(root, "commands"))) {
   const { data } = parse(file);
+  forbidEleventyTags(file, data);
   requireFields(file, data, [
     "title",
     "cmdlet",
@@ -76,11 +83,13 @@ for (const dirent of scriptDirs) {
     errors.push(`scripts/${dirent.name}/: missing .ps1 file`);
   }
   const { data } = parse(index);
+  forbidEleventyTags(index, data);
   requireFields(index, data, ["title", "summary", "topics"]);
 }
 
 for (const file of listMarkdown(path.join(root, "builders"))) {
   const { data } = parse(file);
+  forbidEleventyTags(file, data);
   requireFields(file, data, ["title", "summary", "fields", "template"]);
   if (!Array.isArray(data.fields) || data.fields.length === 0) {
     errors.push(`${path.relative(root, file)}: fields must be a non-empty array`);
@@ -95,6 +104,7 @@ for (const file of listMarkdown(path.join(root, "builders"))) {
 
 for (const file of listMarkdown(path.join(root, "guides"))) {
   const { data } = parse(file);
+  forbidEleventyTags(file, data);
   requireFields(file, data, ["title", "summary", "order", "topics"]);
 }
 

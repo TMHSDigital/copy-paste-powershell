@@ -48,23 +48,41 @@
     ];
   }
 
+  function resultHref(item) {
+    const url = String(item.url || "");
+    if (!url.startsWith("/")) {
+      return "#";
+    }
+    return base.replace(/\/$/, "") + url;
+  }
+
   function render(container, items) {
     if (!container) {
       return;
     }
+    container.replaceChildren();
+    container.hidden = false;
     if (!items.length) {
-      container.hidden = false;
-      container.innerHTML = "<p class=\"lede\">No matches.</p>";
+      const empty = document.createElement("p");
+      empty.className = "lede";
+      empty.textContent = "No matches.";
+      container.append(empty);
       return;
     }
-    container.hidden = false;
-    container.innerHTML = items
-      .slice(0, 12)
-      .map((item) => {
-        const label = item.cmdlet || item.title;
-        return `<a href="${base.replace(/\/$/, "") + item.url}"><span class="result-type">${item.type}</span><strong>${label}</strong> ${item.title && item.cmdlet ? item.title : ""}</a>`;
-      })
-      .join("");
+    items.slice(0, 12).forEach((item) => {
+      const a = document.createElement("a");
+      a.href = resultHref(item);
+      const type = document.createElement("span");
+      type.className = "result-type";
+      type.textContent = item.type || "";
+      const strong = document.createElement("strong");
+      strong.textContent = item.cmdlet || item.title || "";
+      a.append(type, strong);
+      if (item.title && item.cmdlet) {
+        a.append(document.createTextNode(` ${item.title}`));
+      }
+      container.append(a);
+    });
   }
 
   inputs.forEach((input) => {
@@ -78,7 +96,7 @@
       if (!q) {
         if (container) {
           container.hidden = true;
-          container.innerHTML = "";
+          container.replaceChildren();
         }
         return;
       }
