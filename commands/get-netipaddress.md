@@ -8,6 +8,12 @@ topics: [network, ip]
 command: "Get-NetIPAddress -AddressFamily IPv4 | Select-Object InterfaceAlias, IPAddress"
 featured: false
 summary: Show IPv4 and IPv6 addresses on this machine. Windows only.
+module: NetTCPIP
+platforms:
+  - windows
+equivalents:
+  bash: ip addr
+  cmd: ipconfig
 ---
 
 Windows-only (NetTCPIP module). Filter with `-AddressFamily IPv4` to skip IPv6 link-local noise.

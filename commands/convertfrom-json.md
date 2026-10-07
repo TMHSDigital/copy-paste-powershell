@@ -8,6 +8,13 @@ topics: [json]
 command: "Get-Content -Path .\\data.json -Raw | ConvertFrom-Json"
 featured: false
 summary: Turn a JSON string into objects.
+module: Microsoft.PowerShell.Utility
+platforms:
+  - windows
+  - linux
+  - macos
+equivalents:
+  bash: jq . data.json
 ---
 
 The reverse of `ConvertTo-Json`. Use `-Raw` with `Get-Content` so the file is one string, not an array of lines.

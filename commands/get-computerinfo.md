@@ -8,6 +8,12 @@ topics: [system]
 command: "Get-ComputerInfo | Select-Object CsName, WindowsVersion, OsArchitecture"
 featured: false
 summary: "OS name, version, memory, and other machine facts."
+module: Microsoft.PowerShell.Management
+platforms:
+  - windows
+equivalents:
+  bash: uname -a
+  cmd: systeminfo
 ---
 
 A large object. Select the properties you care about. Can be slow the first time.

@@ -8,6 +8,13 @@ topics: [drives]
 command: Get-PSDrive
 featured: false
 summary: "File drives, plus Env, HKCU, HKLM, Variable, and others."
+module: Microsoft.PowerShell.Management
+platforms:
+  - windows
+  - linux
+  - macos
+equivalents:
+  bash: df -h
 ---
 
 PowerShell drives are not just C:. `Env:` is environment variables. `HKCU:` is the current-user registry. `Variable:` is in-memory variables.

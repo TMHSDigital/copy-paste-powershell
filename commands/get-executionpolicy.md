@@ -8,6 +8,9 @@ topics: [help, security]
 command: Get-ExecutionPolicy -List
 featured: false
 summary: Show the execution policy at each scope.
+module: Microsoft.PowerShell.Security
+platforms:
+  - windows
 ---
 
 Tells you why a script might be blocked. `-List` shows every scope. MachinePolicy and UserPolicy come from Group Policy and win.

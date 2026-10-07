@@ -8,6 +8,15 @@ topics: [text, search]
 command: "Select-String -Path .\\docs\\*.md -Pattern 'TODO'"
 featured: false
 summary: Find lines that match a pattern in files or pipeline text.
+module: Microsoft.PowerShell.Utility
+platforms:
+  - windows
+  - linux
+  - macos
+equivalents:
+  bash: grep -rn 'TODO' docs/
+  cmd: findstr /s /n TODO docs\*.md
+  powershell: Get-ChildItem -Path .\docs -Recurse -File | Select-String -Pattern 'TODO'
 ---
 
 This is grep. `-Pattern` can be a regex. `-SimpleMatch` treats it as literal text. `-Path` accepts wildcards. Pipeline input works too.

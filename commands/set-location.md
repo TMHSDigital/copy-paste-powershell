@@ -8,6 +8,14 @@ topics: [files, navigation]
 command: "Set-Location -Path .\\docs"
 featured: false
 summary: Move the prompt into another folder.
+module: Microsoft.PowerShell.Management
+platforms:
+  - windows
+  - linux
+  - macos
+equivalents:
+  bash: cd docs
+  cmd: cd docs
 ---
 
 Changes the working directory for the rest of the session. Same idea as `cd`.

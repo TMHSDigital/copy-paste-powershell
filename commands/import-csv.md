@@ -8,6 +8,11 @@ topics: [csv]
 command: "Import-Csv -Path .\\people.csv"
 featured: false
 summary: Load a CSV into objects using the header row as property names.
+module: Microsoft.PowerShell.Utility
+platforms:
+  - windows
+  - linux
+  - macos
 ---
 
 Each row becomes an object. Column headers become property names. All values are strings until you cast them.

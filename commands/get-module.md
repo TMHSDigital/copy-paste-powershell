@@ -8,6 +8,11 @@ topics: [help, modules]
 command: Get-Module -ListAvailable
 featured: false
 summary: "What modules are loaded, or what is installed."
+module: Microsoft.PowerShell.Core
+platforms:
+  - windows
+  - linux
+  - macos
 ---
 
 No parameters: currently imported. `-ListAvailable`: installed on disk. Import with `Import-Module`.

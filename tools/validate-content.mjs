@@ -48,7 +48,7 @@ let featured = 0;
 for (const file of listMarkdown("commands")) {
   const { data } = readFrontmatter(file);
   forbidEleventyTags(file, data);
-  requireFields(file, data, ["title", "cmdlet", "aliases", "category", "difficulty", "topics", "command", "summary"]);
+  requireFields(file, data, ["title", "cmdlet", "aliases", "category", "difficulty", "topics", "command", "summary", "module", "platforms"]);
   if (data.aliases !== undefined && !Array.isArray(data.aliases)) {
     fail(file, "aliases must be an array");
   }
@@ -83,8 +83,16 @@ for (const file of listMarkdown("commands")) {
   if (data.docs && !/^https:\/\//.test(data.docs)) {
     fail(file, "docs must be an https URL");
   }
-  if (data.notes !== undefined && (typeof data.notes !== "object" || Array.isArray(data.notes))) {
-    fail(file, "notes must be a map, for example { \"7\": \"text\" }");
+  if (data.notes !== undefined) {
+    if (typeof data.notes !== "object" || Array.isArray(data.notes)) {
+      fail(file, 'notes must be a map, for example { "7": "text" }');
+    } else {
+      for (const key of Object.keys(data.notes)) {
+        if (!["5.1", "7", "all"].includes(key)) {
+          fail(file, `notes key '${key}' must be "5.1", "7", or "all"`);
+        }
+      }
+    }
   }
   if (data.equivalents !== undefined) {
     if (typeof data.equivalents !== "object" || Array.isArray(data.equivalents)) {

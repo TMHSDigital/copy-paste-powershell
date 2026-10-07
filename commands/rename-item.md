@@ -8,6 +8,14 @@ topics: [files, rename]
 command: "Rename-Item -Path .\\draft.txt -NewName final.txt"
 featured: false
 summary: Change the name of a file or folder in place.
+module: Microsoft.PowerShell.Management
+platforms:
+  - windows
+  - linux
+  - macos
+equivalents:
+  bash: mv draft.txt final.txt
+  cmd: ren draft.txt final.txt
 ---
 
 Renames something in the same folder. `-NewName` is a name, not a full path. To move and rename, use `Move-Item`.

@@ -8,6 +8,11 @@ topics: [files]
 command: "Get-Item -Path .\\notes.txt"
 featured: false
 summary: "Return a single item at a path, not its children."
+module: Microsoft.PowerShell.Management
+platforms:
+  - windows
+  - linux
+  - macos
 ---
 
 Gets the item itself. `Get-ChildItem` lists what is inside a folder. `Get-Item .\docs` is the folder object. `Get-ChildItem .\docs` is the contents.

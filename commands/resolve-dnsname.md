@@ -8,6 +8,12 @@ topics: [network, dns]
 command: Resolve-DnsName -Name example.com
 featured: false
 summary: DNS lookup. Windows. Replaces nslookup for most cases.
+module: DnsClient
+platforms:
+  - windows
+equivalents:
+  bash: dig example.com
+  cmd: nslookup example.com
 ---
 
 Windows-only. `-Type A` or `-Type MX` when you care about a record type. On PowerShell 7 on Linux/macOS, use `Resolve-DnsName` only if the module exists, or call `nslookup`.

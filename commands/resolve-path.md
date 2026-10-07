@@ -8,6 +8,13 @@ topics: [files, paths]
 command: "Resolve-Path -Path .\\docs"
 featured: false
 summary: Expand . and .. into an absolute path. The path must exist.
+module: Microsoft.PowerShell.Management
+platforms:
+  - windows
+  - linux
+  - macos
+equivalents:
+  bash: realpath docs
 ---
 
 Resolves wildcards and relative paths. Throws if the path does not exist. For a path you are about to create, use `Join-Path` with `Get-Location` instead.

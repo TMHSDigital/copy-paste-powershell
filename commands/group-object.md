@@ -8,6 +8,11 @@ topics: [pipeline, group]
 command: "Get-ChildItem -File | Group-Object -Property Extension"
 featured: false
 summary: Count and bucket objects that share a property value.
+module: Microsoft.PowerShell.Utility
+platforms:
+  - windows
+  - linux
+  - macos
 ---
 
 Buckets objects. Each group has `Name`, `Count`, and `Group` (the members). Great for "how many of each extension".

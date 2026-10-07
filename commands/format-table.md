@@ -9,6 +9,11 @@ command: "Get-ChildItem | Format-Table Name, Length -AutoSize"
 featured: false
 warning: "Format-* cmdlets are for display. Do not pipe them into Export-Csv or more processing."
 summary: Pretty-print objects as columns in the console.
+module: Microsoft.PowerShell.Utility
+platforms:
+  - windows
+  - linux
+  - macos
 ---
 
 Formats output for your eyes. After `Format-Table`, the pipeline is format objects, not the original data. Filter and select first, format last.
