@@ -100,6 +100,9 @@
   // Code and tables that scroll sideways must be reachable by keyboard.
   function makeScrollableFocusable() {
     document.querySelectorAll("main pre, main .table-wrap").forEach((el) => {
+      if (el.hasAttribute("data-always-focusable")) {
+        return;
+      }
       if (el.scrollWidth > el.clientWidth + 1) {
         if (!el.hasAttribute("tabindex")) {
           el.setAttribute("tabindex", "0");
