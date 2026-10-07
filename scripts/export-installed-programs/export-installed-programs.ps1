@@ -16,6 +16,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# UTF-8 with a BOM so Excel shows non-ASCII names correctly on 5.1 and 7.
+$csvEncoding = if ($PSVersionTable.PSVersion.Major -ge 6) { 'utf8BOM' } else { 'UTF8' }
+
 $keys = @(
     'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*',
     'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*',
@@ -31,6 +34,6 @@ $rows = foreach ($key in $keys) {
 $unique = $rows | Sort-Object DisplayName, DisplayVersion -Unique
 
 if ($PSCmdlet.ShouldProcess($OutputPath, 'Write installed programs CSV')) {
-    $unique | Export-Csv -Path $OutputPath -NoTypeInformation
+    $unique | Export-Csv -Path $OutputPath -NoTypeInformation -Encoding $csvEncoding
     Write-Output $OutputPath
 }

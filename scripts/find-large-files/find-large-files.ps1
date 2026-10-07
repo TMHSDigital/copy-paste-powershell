@@ -11,11 +11,12 @@
 .EXAMPLE
     .\find-large-files.ps1 -Path .\docs -MinimumSizeMB 50
 #>
-[CmdletBinding(SupportsShouldProcess)]
+[CmdletBinding()]
 param(
     [Parameter(Mandatory)]
     [string]$Path,
 
+    [ValidateRange(0, 1048576)]
     [int]$MinimumSizeMB = 100
 )
 
@@ -27,9 +28,11 @@ if (-not (Test-Path -LiteralPath $Path -PathType Container)) {
 
 $threshold = $MinimumSizeMB * 1MB
 
-if ($PSCmdlet.ShouldProcess($Path, "List files >= $MinimumSizeMB MB")) {
-    Get-ChildItem -LiteralPath $Path -Recurse -File -ErrorAction SilentlyContinue |
-        Where-Object { $_.Length -ge $threshold } |
-        Sort-Object -Property Length -Descending |
-        Select-Object FullName, @{ Name = 'SizeMB'; Expression = { [math]::Round($_.Length / 1MB, 2) } }, LastWriteTime
+Get-ChildItem -LiteralPath $Path -Recurse -File -ErrorAction SilentlyContinue -ErrorVariable scanErrors |
+    Where-Object { $_.Length -ge $threshold } |
+    Sort-Object -Property Length -Descending |
+    Select-Object FullName, @{ Name = 'SizeMB'; Expression = { [math]::Round($_.Length / 1MB, 2) } }, LastWriteTime
+
+if ($scanErrors.Count -gt 0) {
+    Write-Warning "$($scanErrors.Count) folder(s) skipped (access denied or unreadable)."
 }

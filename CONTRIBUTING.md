@@ -23,7 +23,7 @@ Open `http://localhost:8080`. `npm run build` writes the static site to `_site/`
 ## Add a script
 
 1. Create `scripts/your-script-name/`.
-2. Add `your-script-name.ps1` with comment-based help and `[CmdletBinding(SupportsShouldProcess)]`.
+2. Add `your-script-name.ps1` with comment-based help and `[CmdletBinding()]`. Use `[CmdletBinding(SupportsShouldProcess)]` only if the script changes files or system state. Read-only scripts should not take `-WhatIf`.
 3. Add `index.md` using [`scripts/_template.md`](scripts/_template.md) as the frontmatter guide.
 4. Parameters only. No hardcoded machine names, user folders, or secrets.
 5. Support `-WhatIf` for anything that changes files or system state.

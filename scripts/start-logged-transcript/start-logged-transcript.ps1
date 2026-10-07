@@ -22,7 +22,11 @@ $ErrorActionPreference = 'Stop'
 
 if ($Stop) {
     if ($PSCmdlet.ShouldProcess('session', 'Stop-Transcript')) {
-        Stop-Transcript
+        try {
+            Stop-Transcript
+        } catch {
+            Write-Warning 'No transcript is running in this window, so there is nothing to stop.'
+        }
     }
     return
 }

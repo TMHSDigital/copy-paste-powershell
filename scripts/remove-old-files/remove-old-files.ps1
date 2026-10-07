@@ -47,9 +47,13 @@ if (-not (Test-Path -LiteralPath $Path -PathType Container)) {
 
 $cutoff = (Get-Date).AddDays(-1 * $OlderThanDays)
 $candidates = @(
-    Get-ChildItem -LiteralPath $Path -File -Filter $Filter -Recurse:$Recurse |
+    Get-ChildItem -LiteralPath $Path -File -Filter $Filter -Recurse:$Recurse -ErrorAction SilentlyContinue -ErrorVariable scanErrors |
         Where-Object { $_.LastWriteTime -lt $cutoff }
 )
+
+if ($scanErrors.Count -gt 0) {
+    Write-Warning "$($scanErrors.Count) folder(s) skipped (access denied or unreadable)."
+}
 
 if (-not $Apply) {
     Write-Warning "Preview only. $($candidates.Count) file(s) older than $OlderThanDays day(s). Pass -Apply to delete."
