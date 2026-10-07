@@ -1,0 +1,28 @@
+name: Site bug
+description: Something on the website itself is broken (layout, search, copy buttons, builders, links).
+title: "Site: "
+labels: [bug]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What went wrong?
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: Edge on Windows 11, Safari on iPhone
+  - type: checkboxes
+    id: a11y
+    attributes:
+      label: Accessibility
+      options:
+        - label: This affects keyboard, screen reader, zoom, or color contrast use.

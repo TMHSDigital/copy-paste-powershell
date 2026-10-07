@@ -1,0 +1,49 @@
+name: Request a command or script
+description: Tell us what you are trying to do, and we will add a command page, script, or builder for it.
+title: "Request: "
+labels: [content, enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the **task**, not just the cmdlet. "Find which program is using port 8080" is more useful than "Get-NetTCPConnection".
+        Please do not paste real file paths, server names, or passwords.
+  - type: textarea
+    id: task
+    attributes:
+      label: What are you trying to do?
+      placeholder: I want to find every file over 1 GB on a drive and see which folder it is in.
+    validations:
+      required: true
+  - type: input
+    id: tried
+    attributes:
+      label: What did you search for or try?
+      placeholder: "Searched the site for: large files"
+  - type: dropdown
+    id: os
+    attributes:
+      label: Where do you run PowerShell?
+      multiple: true
+      options:
+        - Windows PowerShell 5.1
+        - PowerShell 7 on Windows
+        - PowerShell 7 on macOS
+        - PowerShell 7 on Linux
+        - Not sure
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What would help most?
+      options:
+        - A one-line command
+        - A ready-made script
+        - A fill-in-the-blank builder
+        - A guide that explains the idea
+        - Not sure
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Want to write it yourself?
+      options:
+        - label: I would like to open a pull request for this (see CONTRIBUTING.md).

@@ -1,0 +1,46 @@
+name: Report a wrong or broken snippet
+description: A command, script, or builder gave an error or did something unexpected, or a page is wrong.
+title: "Broken: "
+labels: [bug, content]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Please remove real file paths, computer names, user names, and anything secret from error messages before you paste them.
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: The "Report a problem" link fills this in for you.
+      placeholder: https://tmhsdigital.github.io/Powershell-for-Dummies/commands/get-childitem/
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What did you run, and what happened?
+      description: Paste the command and the error. Use placeholders for private paths.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+  - type: input
+    id: version
+    attributes:
+      label: PowerShell version
+      description: "Run: $PSVersionTable.PSVersion"
+      placeholder: "5.1.26100 or 7.5.2"
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows 11
+        - Windows 10
+        - Windows Server
+        - macOS
+        - Linux
+        - Other

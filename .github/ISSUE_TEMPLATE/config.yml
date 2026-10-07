@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Ask a "how do I...?" question
+    url: https://github.com/TMHSDigital/Powershell-for-Dummies/discussions
+    about: Not sure which command you need? Ask in Discussions. Good questions become new pages.
+  - name: Report a security problem privately
+    url: https://github.com/TMHSDigital/Powershell-for-Dummies/security/advisories/new
+    about: Please do not open a public issue for security problems. See SECURITY.md.
