@@ -12,6 +12,8 @@ platforms: [windows, linux, macos]
 equivalents:
   bash: xdg-open notes.txt
   cmd: start notes.txt
+notes:
+  "7": On Linux and macOS, the start alias is not defined. Type Start-Process.
 ---
 
 Starts a program in its own window. Point it at a document or a URL and it opens with the default app, like double-clicking.
