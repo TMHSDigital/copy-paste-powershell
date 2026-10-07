@@ -3,7 +3,7 @@ import path from "node:path";
 import vm from "node:vm";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
-import yaml from "js-yaml";
+import { load as loadYaml } from "js-yaml";
 
 export const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -36,7 +36,7 @@ export function listMarkdown(dir, { recursive = false } = {}) {
 
 // Parse YAML the same way Eleventy does (js-yaml 4), so the tools and the
 // site never disagree about what a frontmatter value is.
-const MATTER_OPTIONS = { engines: { yaml: (text) => yaml.load(text) } };
+const MATTER_OPTIONS = { engines: { yaml: (text) => loadYaml(text) } };
 
 export function readFrontmatter(rel) {
   return matter(fs.readFileSync(path.join(root, rel), "utf8"), MATTER_OPTIONS);

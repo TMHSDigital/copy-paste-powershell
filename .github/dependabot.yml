@@ -10,6 +10,13 @@ updates:
       dev-tools:
         dependency-type: development
     open-pull-requests-limit: 5
+    ignore:
+      # js-yaml must stay on the same major version Eleventy uses, so the
+      # validation tools parse frontmatter exactly like the site does. The
+      # package.json override also feeds it to gray-matter, which calls
+      # yaml.safeLoad (removed in js-yaml 5). Bump only after Eleventy moves.
+      - dependency-name: js-yaml
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
