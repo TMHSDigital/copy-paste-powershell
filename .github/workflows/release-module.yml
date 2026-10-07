@@ -1,0 +1,53 @@
+name: Release PowerShell module
+
+# Push a tag like v0.1.0 to package module/CopyPastePowerShell, test it, and
+# publish it to the PowerShell Gallery. Publishing only happens when the
+# PSGALLERY_API_KEY repository secret is set; otherwise the job just verifies
+# and uploads the package as a build artifact.
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to package (no publish unless run from a tag)
+        required: true
+        default: 0.1.0
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: windows-latest
+    env:
+      PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
+      VERSION: ${{ github.ref_type == 'tag' && github.ref_name || inputs.version }}
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Package module
+        run: node tools/build-module.mjs --package $env:VERSION
+      - name: Install Pester and PSScriptAnalyzer
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module Pester -MinimumVersion 5.5.0 -MaximumVersion 5.99.99 -Scope CurrentUser -Force -SkipPublisherCheck
+          Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
+      - name: Test
+        run: ./tests/run.ps1 -Lint
+      - name: Upload package
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: CopyPastePowerShell-module
+          path: module/CopyPastePowerShell
+      - name: Publish to PowerShell Gallery
+        if: github.ref_type == 'tag' && env.PSGALLERY_API_KEY != ''
+        run: Publish-PSResource -Path ./module/CopyPastePowerShell -Repository PSGallery -ApiKey $env:PSGALLERY_API_KEY
