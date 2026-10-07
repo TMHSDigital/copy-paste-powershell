@@ -1,0 +1,5 @@
+<p class="edit-link">
+  <a href="{{ site.repo }}/edit/main/{{ page.inputPath | replace('./', '') }}">Edit this page on GitHub</a>
+  <span aria-hidden="true">·</span>
+  <a href="{{ site.repo }}/issues/new?template=broken-snippet.yml&amp;page={{ (site.url + page.url) | urlencode }}">Report a problem</a>
+</p>

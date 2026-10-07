@@ -11,8 +11,10 @@ layout: base.njk
 
   {{ content | safe }}
 
+  <p id="builder-shared-note" class="callout" role="note" hidden>This form was filled in from a shared link. Read the script before you run it.</p>
+
   <div class="builder-layout">
-    <form id="builder-form" class="builder-form" data-filename="{{ page.fileSlug }}.ps1">
+    <form id="builder-form" class="builder-form" novalidate>
       {% for field in fields %}
         <div class="field">
           {% if field.type == "checkbox" %}
@@ -28,19 +30,23 @@ layout: base.njk
               {% endfor %}
             </select>
           {% else %}
-            <label for="field-{{ field.name }}">{{ field.label }}</label>
+            <label for="field-{{ field.name }}">{{ field.label }}{% if field.required %} <span class="required">(required)</span>{% endif %}</label>
             <input
               id="field-{{ field.name }}"
-              type="{{ field.type or "text" }}"
+              type="{% if field.type == 'number' %}text{% else %}{{ field.type or 'text' }}{% endif %}"
+              {% if field.type == "number" %}inputmode="numeric"{% endif %}
               name="{{ field.name }}"
-              value="{{ field.default or "" }}"
-              placeholder="{{ field.placeholder or "" }}"
+              value="{{ field.default | orEmpty }}"
+              placeholder="{{ field.placeholder or '' }}"
               spellcheck="false"
+              autocomplete="off"
+              aria-describedby="error-{{ field.name }}{% if field.help %} help-{{ field.name }}{% endif %}"
             >
           {% endif %}
           {% if field.help %}
-            <p class="field-help">{{ field.help }}</p>
+            <p class="field-help" id="help-{{ field.name }}">{{ field.help }}</p>
           {% endif %}
+          <p class="field-error" id="error-{{ field.name }}" role="alert" hidden></p>
         </div>
       {% endfor %}
     </form>
@@ -52,14 +58,21 @@ layout: base.njk
           <span class="terminal-dots" aria-hidden="true"></span>
           <span class="terminal-title">{{ page.fileSlug }}.ps1</span>
           <div class="terminal-actions">
-            <button type="button" class="btn btn-small" data-copy-target="#builder-preview">Copy</button>
+            <button type="button" class="btn btn-small" data-copy-target="#builder-preview" data-track="builder-copy" aria-label="Copy generated script">Copy</button>
             <button type="button" class="btn btn-small btn-secondary" id="builder-download">Download</button>
+            <button type="button" class="btn btn-small btn-secondary" id="builder-share" data-copy="" aria-label="Copy a link to this filled-in form">Copy link</button>
           </div>
         </div>
         <pre id="builder-preview" class="terminal-body command-pre"><code class="language-powershell"></code></pre>
       </div>
+      <div class="builder-explain" hidden>
+        <h2 class="preview-label">What it does</h2>
+        <ul id="builder-explain"></ul>
+      </div>
     </div>
   </div>
+
+  {% include "edit-link.njk" %}
 
   <script type="application/json" id="builder-spec">{{ { fields: fields, template: template, filename: page.fileSlug + ".ps1" } | json | safe }}</script>
 </article>

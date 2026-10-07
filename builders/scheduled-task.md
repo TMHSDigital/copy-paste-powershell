@@ -1,0 +1,63 @@
+---
+title: Run a script on a schedule
+summary: Generate a Register-ScheduledTask command that runs a .ps1 daily, weekly, or at sign-in.
+topics: [automation, schedule, windows]
+fields:
+  - name: taskName
+    label: Task name
+    type: text
+    required: true
+    default: "Nightly folder backup"
+    help: Shows up in Task Scheduler. Pick something you will recognize later.
+  - name: script
+    label: Full path to the .ps1
+    type: text
+    required: true
+    default: "C:\\Scripts\\backup-folder.ps1"
+    placeholder: "C:\\Scripts\\backup-folder.ps1"
+    help: Use a full path. Scheduled tasks do not start in your current folder.
+  - name: arguments
+    label: Script parameters (optional)
+    type: text
+    default: ""
+    placeholder: "-Source D:\\Docs -DestinationRoot E:\\Backups"
+    help: Typed exactly as you would after the script name.
+  - name: frequency
+    label: When
+    type: select
+    default: daily
+    options:
+      - { value: daily, label: Every day, explain: "-Daily -At runs it once a day at that time." }
+      - { value: weekly, label: Once a week, explain: "-Weekly -DaysOfWeek runs it on the chosen day at that time." }
+      - { value: logon, label: When I sign in, explain: "-AtLogOn runs it each time you sign in to Windows." }
+  - name: day
+    label: Day (weekly only)
+    type: select
+    default: Monday
+    options:
+      - { value: Monday, label: Monday }
+      - { value: Tuesday, label: Tuesday }
+      - { value: Wednesday, label: Wednesday }
+      - { value: Thursday, label: Thursday }
+      - { value: Friday, label: Friday }
+      - { value: Saturday, label: Saturday }
+      - { value: Sunday, label: Sunday }
+  - name: time
+    label: Time (daily and weekly)
+    type: time
+    default: "09:00"
+template: |
+  # Windows only. If you get "Access is denied", open PowerShell as administrator.
+  $script = {{script:q}}
+  $arguments = '-NoProfile -ExecutionPolicy RemoteSigned -File "{0}" {1}' -f $script, {{arguments:q}}
+  $action = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument $arguments
+  {{#frequency_daily}}$trigger = New-ScheduledTaskTrigger -Daily -At '{{time}}'{{/frequency_daily}}{{#frequency_weekly}}$trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek {{day}} -At '{{time}}'{{/frequency_weekly}}{{#frequency_logon}}$trigger = New-ScheduledTaskTrigger -AtLogOn{{/frequency_logon}}
+  Register-ScheduledTask -TaskName {{taskName:q}} -Action $action -Trigger $trigger
+
+  # Check it:  Get-ScheduledTask -TaskName {{taskName:q}} | Get-ScheduledTaskInfo
+  # Undo it:   Unregister-ScheduledTask -TaskName {{taskName:q}}
+---
+
+Creates a Windows scheduled task that runs your script with Windows PowerShell. The task runs as you, while you are signed in.
+
+Test the script by hand first. If it works at the prompt but not on the schedule, the usual cause is a relative path inside the script. Scheduled tasks start in `C:\Windows\System32`, not in your folder.

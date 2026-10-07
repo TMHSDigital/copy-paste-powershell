@@ -43,6 +43,9 @@ export default function (eleventyConfig) {
   eleventyConfig.ignores.add("commands/_template.md");
   eleventyConfig.ignores.add("scripts/_template.md");
   eleventyConfig.ignores.add("builders/_template.md");
+  eleventyConfig.ignores.add(".playwright-mcp/**");
+  eleventyConfig.ignores.add("tests/**");
+  eleventyConfig.ignores.add("module/**");
 
   eleventyConfig.addPassthroughCopy("assets");
   eleventyConfig.addPassthroughCopy("scripts/**/*.ps1");
@@ -166,14 +169,15 @@ export default function (eleventyConfig) {
     return Prism.highlight(String(code), Prism.languages.powershell, "powershell");
   });
 
-  eleventyConfig.addFilter("json", (value) => JSON.stringify(value));
+  // Safe inside <script> elements: "<" can never close the tag or open a comment.
+  eleventyConfig.addFilter("json", (value) =>
+    JSON.stringify(value)
+      .replace(/</g, "\\u003c")
+      .replace(/>/g, "\\u003e")
+      .replace(/&/g, "\\u0026"),
+  );
 
-  eleventyConfig.addFilter("isoDate", (value) => {
-    if (!value) {
-      return "";
-    }
-    return new Date(value).toISOString().slice(0, 10);
-  });
+  eleventyConfig.addFilter("orEmpty", (value) => (value === undefined || value === null ? "" : value));
 
   return {
     dir: {
