@@ -82,3 +82,7 @@ coverage/
 
 # --- Local tool output ---
 .playwright-mcp/
+
+# --- Generated module files ---
+module/CopyPastePowerShell/snippets.json
+module/CopyPastePowerShell/Scripts/

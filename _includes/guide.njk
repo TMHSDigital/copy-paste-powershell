@@ -9,4 +9,5 @@ layout: base.njk
     {% if summary %}<p class="lede">{{ summary }}</p>{% endif %}
   </header>
   {{ content | safe }}
+  {% include "edit-link.njk" %}
 </article>

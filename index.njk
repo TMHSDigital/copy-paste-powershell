@@ -1,32 +1,28 @@
 ---
 layout: base.njk
-title: PowerShell for Dummies
-description: PowerShell commands, scripts, and builders. Copy them. Run them.
+title: Copy-Paste PowerShell
+description: Plain-English PowerShell for beginners. Commands to copy, safe scripts with -WhatIf, fill-in-the-blank builders, and a bash-to-PowerShell translator.
 ---
 <section class="hero">
-  <div class="cover-lockup">
-    <p class="cover-topic">PowerShell</p>
-    <p class="cover-series">FOR DUMMIES</p>
-  </div>
-  <p class="lede">Commands to copy. Scripts to run. Builders that fill in the blanks. No memorizing required.</p>
-  <form class="hero-search" role="search">
+  <h1 class="hero-title"><span>Copy-Paste</span> PowerShell</h1>
+  <p class="lede">Commands to copy. Scripts that preview before they change anything. Builders that fill in the blanks. Everything explained in plain English.</p>
+  <form class="hero-search" role="search" action="/" method="get">
     <label class="visually-hidden" for="home-q">Search</label>
     <span class="prompt" aria-hidden="true">PS&gt;</span>
-    <input id="home-q" type="search" placeholder="Get-ChildItem, CSV, ping" autocomplete="off" data-search-input>
+    <input id="home-q" name="q" type="search" placeholder="Try: list files, zip, grep, ping" autocomplete="off" data-search-input data-search-primary>
   </form>
-  <div id="search-results" class="search-results" hidden></div>
   <p class="hero-stats">
-    <span><strong>{{ collections.commands.length }}</strong> commands</span>
-    <span><strong>{{ collections.scripts.length }}</strong> scripts</span>
-    <span><strong>{{ collections.builders.length }}</strong> builders</span>
-    <span><strong>{{ collections.guides.length }}</strong> guides</span>
+    <a href="/commands/"><strong>{{ collections.commands.length }}</strong> commands</a>
+    <a href="/scripts/"><strong>{{ collections.scripts.length }}</strong> scripts</a>
+    <a href="/builders/"><strong>{{ collections.builders.length }}</strong> builders</a>
+    <a href="/guides/"><strong>{{ collections.guides.length }}</strong> guides</a>
   </p>
 </section>
 
 <section>
   <div class="section-head">
-    <p class="part-label">Part 1</p>
-    <h2>Start here</h2>
+    <p class="kicker">Start here</p>
+    <h2>New to PowerShell?</h2>
     <p>Read these in order. Then skip around.</p>
   </div>
   <ol class="guide-steps">
@@ -41,9 +37,32 @@ description: PowerShell commands, scripts, and builders. Copy them. Run them.
 
 <section>
   <div class="section-head">
-    <p class="part-label">Part 2</p>
-    <h2>The commands</h2>
-    <p>Grouped the way you will actually look them up.</p>
+    <p class="kicker">Cheat sheet</p>
+    <h2>Six to learn first</h2>
+    <p>These cover most of week one.</p>
+  </div>
+  <div class="stack">
+    {% for item in collections.featuredCommands %}
+      <article class="cmd-card">
+        <div>
+          <a href="{{ item.url }}"><code>{{ item.data.cmdlet }}</code></a>
+          <p>{{ item.data.title }}</p>
+        </div>
+        <div class="cmd-card-copy">
+          <span class="prompt" aria-hidden="true">PS&gt;</span>
+          <code>{{ item.data.command }}</code>
+          <button type="button" class="btn btn-small" data-copy="{{ item.data.command | e }}" data-track-value="{{ item.fileSlug }}">Copy</button>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+  <p class="more-links"><a href="/commands/">All {{ collections.commands.length }} commands</a> <a href="/cheat-sheet/">Printable cheat sheet</a></p>
+</section>
+
+<section>
+  <div class="section-head">
+    <p class="kicker">The commands</p>
+    <h2>Grouped the way you look them up</h2>
   </div>
   <div class="card-grid">
     {% for cat in collections.commandCategories %}
@@ -58,24 +77,29 @@ description: PowerShell commands, scripts, and builders. Copy them. Run them.
 
 <section>
   <div class="section-head">
-    <p class="part-label">Cheat sheet</p>
-    <h2>Six to steal first</h2>
-    <p>These cover most of week one.</p>
+    <p class="kicker">Tools</p>
+    <h2>When copying is not enough</h2>
   </div>
-  <div class="stack">
-    {% for item in collections.featuredCommands %}
-      <article class="cmd-card">
-        <div>
-          <a href="{{ item.url }}"><code>{{ item.data.cmdlet }}</code></a>
-          <p>{{ item.data.title }}</p>
-        </div>
-        <div class="cmd-card-copy">
-          <span class="prompt" aria-hidden="true">PS&gt;</span>
-          <code>{{ item.data.command }}</code>
-          <button type="button" class="btn btn-small" data-copy="{{ item.data.command | e }}">Copy</button>
-        </div>
-      </article>
-    {% endfor %}
+  <div class="card-grid">
+    <a class="card" href="/from-bash/">
+      <p class="kicker">Translate</p>
+      <h3>From bash or cmd</h3>
+      <p>Know <code>grep</code>, <code>ls -la</code>, or <code>ipconfig</code>? Find the PowerShell way, plus the gotchas.</p>
+    </a>
+    <a class="card" href="/explain/">
+      <p class="kicker">Explain</p>
+      <h3>What does this command do?</h3>
+      <p>Paste a line you found online. See each step in plain English, with warnings for anything risky.</p>
+    </a>
+    <a class="card" href="/builders/">
+      <p class="kicker">Build</p>
+      <h3>Fill in the blanks</h3>
+      <p>Forms that write the script for you: copy, rename, clean up, zip, schedule.</p>
+    </a>
+    <a class="card" href="/cheat-sheet/">
+      <p class="kicker">Print</p>
+      <h3>One-page cheat sheet</h3>
+      <p>Every command on two sides of paper. Tape it next to your monitor.</p>
+    </a>
   </div>
-  <p class="more-links"><a href="/commands/">All commands</a> <a href="/scripts/">Scripts</a> <a href="/builders/">Builders</a></p>
 </section>

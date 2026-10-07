@@ -1,0 +1,43 @@
+---
+layout: base.njk
+title: Printable PowerShell cheat sheet
+description: Every command on the site on one printable page, grouped by task. Print it or save it as a PDF.
+permalink: /cheat-sheet/
+---
+<header class="page-head cheat-head">
+  <p class="kicker no-print">Print me</p>
+  <h1>PowerShell cheat sheet</h1>
+  <p class="lede">Every command on the site, grouped by task. Print it, or choose <strong>Save as PDF</strong> in the print dialog.</p>
+  <p class="no-print"><button type="button" class="btn" onclick="window.print()">Print or save as PDF</button></p>
+</header>
+
+<div class="cheat-sheet">
+  {% for cat in collections.commandCategories %}
+    <section>
+      <h2>{{ cat.label }}</h2>
+      <dl>
+        {% for item in collections.commands %}
+          {% if item.data.category == cat.slug %}
+            <dt>{{ item.data.title }}</dt>
+            <dd><code>{{ item.data.command }}</code></dd>
+          {% endif %}
+        {% endfor %}
+      </dl>
+    </section>
+  {% endfor %}
+  <section>
+    <h2>Stay safe</h2>
+    <dl>
+      <dt>Preview a change</dt>
+      <dd><code>-WhatIf</code></dd>
+      <dt>Ask before each change</dt>
+      <dd><code>-Confirm</code></dd>
+      <dt>Help for any command</dt>
+      <dd><code>Get-Help Get-ChildItem -Examples</code></dd>
+      <dt>What is in this object?</dt>
+      <dd><code>Get-ChildItem | Get-Member</code></dd>
+    </dl>
+  </section>
+</div>
+
+<p class="print-only">More commands, scripts, and builders: {{ site.url }}/</p>

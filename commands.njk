@@ -1,41 +1,53 @@
 ---
 layout: base.njk
 title: Commands
+description: Every PowerShell command on the site, grouped by task, with a copyable one-liner and a plain-English explanation.
 permalink: /commands/
-eleventyExcludeFromCollections: true
 ---
 <header class="page-head">
   <p class="kicker">The cheat sheet</p>
   <h1>Commands</h1>
   <p class="lede">One-liners plus the why. Copy, paste, then open the page if the result looks wrong.</p>
-  <form class="hero-search hero-search-light" role="search">
+  <form class="hero-search hero-search-light" role="search" onsubmit="return false">
     <label class="visually-hidden" for="cmd-q">Filter commands</label>
     <span class="prompt" aria-hidden="true">PS&gt;</span>
-    <input id="cmd-q" type="search" placeholder="Filter by name, alias, or topic" autocomplete="off" data-search-input data-search-scope="command">
+    <input id="cmd-q" name="q" type="search" placeholder="Filter by name, alias, task, or bash command" autocomplete="off" data-search-input data-search-mode="filter" data-search-primary aria-describedby="filter-count">
   </form>
-  <div id="search-results" class="search-results" hidden></div>
+  <div class="filter-bar">
+    <label class="check-label"><input type="checkbox" data-filter-toggle="cross-platform"> Works on Linux and macOS</label>
+    <label class="check-label"><input type="checkbox" data-filter-toggle="no-admin"> No admin needed</label>
+    <span id="filter-count" class="filter-count">{{ collections.commands.length }} commands</span>
+  </div>
   <nav class="cat-jump" aria-label="Categories">
     {% for cat in collections.commandCategories %}
       <a href="#{{ cat.slug }}">{{ cat.label }} <span>{{ cat.count }}</span></a>
     {% endfor %}
   </nav>
+  <p class="more-links"><a href="/from-bash/">Coming from bash?</a> <a href="/from-cmd/">Coming from cmd?</a> <a href="/cheat-sheet/">Printable version</a></p>
 </header>
 
+<p id="filter-empty" class="callout" hidden>No commands match. Try fewer words, or <a href="{{ site.repo }}/issues/new?template=request-command.yml">ask for the one you need</a>.</p>
+
 {% for cat in collections.commandCategories %}
-  <section id="{{ cat.slug }}" class="category-block">
+  <section id="{{ cat.slug }}" class="category-block" data-filter-section>
     <h2>{{ cat.label }}</h2>
     <div class="stack">
       {% for item in collections.commands %}
         {% if item.data.category == cat.slug %}
-          <article class="cmd-card" data-search-item>
+          {%- set platforms = item.data.platforms or ["windows", "linux", "macos"] -%}
+          <article class="cmd-card" data-search-item
+            data-search-text="{{ item | commandSearchText }}"
+            data-flags="{% if 'linux' in platforms and 'macos' in platforms %}cross-platform{% endif %} {% if not item.data.admin %}no-admin{% endif %}">
             <div>
               <a href="{{ item.url }}"><code>{{ item.data.cmdlet }}</code></a>
-              <p>{{ item.data.title }}</p>
+              <p>{{ item.data.title }}
+                {%- if not ('linux' in platforms) %} <span class="badge badge-quiet badge-tiny">Windows only</span>{% endif %}
+                {%- if item.data.admin %} <span class="badge badge-admin badge-tiny">Admin</span>{% endif %}</p>
             </div>
             <div class="cmd-card-copy">
               <span class="prompt" aria-hidden="true">PS&gt;</span>
               <code>{{ item.data.command }}</code>
-              <button type="button" class="btn btn-small" data-copy="{{ item.data.command | e }}">Copy</button>
+              <button type="button" class="btn btn-small" data-copy="{{ item.data.command | e }}" data-track-value="{{ item.fileSlug }}">Copy</button>
             </div>
           </article>
         {% endif %}

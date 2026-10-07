@@ -1,0 +1,45 @@
+---
+layout: base.njk
+title: From cmd to PowerShell
+description: The PowerShell equivalent of common Command Prompt (cmd.exe) commands such as dir, copy, del, type, ipconfig, ping, tasklist, findstr, and set.
+permalink: /from-cmd/
+---
+<article class="prose prose-wide">
+  <header class="page-head">
+    <p class="kicker">Translate</p>
+    <h1>From cmd to PowerShell</h1>
+    <p class="lede">Moving over from the Command Prompt? Many old commands still work as aliases, but the PowerShell versions give you objects you can sort, filter, and export. Also see <a href="/from-bash/">From bash</a>.</p>
+  </header>
+
+  <div class="table-wrap">
+    <table class="translate-table">
+      <thead>
+        <tr><th scope="col">cmd.exe</th><th scope="col">PowerShell</th><th scope="col">Learn more</th></tr>
+      </thead>
+      <tbody>
+        {%- for item in collections.equivalents %}
+          {%- if item.data.equivalents.cmd %}
+          {%- set ps = item.data.equivalents.powershell or item.data.command %}
+          <tr>
+            <td><code>{{ item.data.equivalents.cmd }}</code></td>
+            <td><div class="cmd-cell"><code>{{ ps }}</code><button type="button" class="btn btn-small" data-copy="{{ ps | e }}" data-track-value="from-cmd/{{ item.fileSlug }}">Copy</button></div></td>
+            <td><a href="{{ item.url }}">{{ item.data.cmdlet }}</a></td>
+          </tr>
+          {%- endif %}
+        {%- endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Gotchas for cmd users</h2>
+  <ul class="gotchas">
+    <li><strong>Switches use a dash, not a slash.</strong> <code>dir /s</code> becomes <code>Get-ChildItem -Recurse</code>. <code>dir</code> still works as an alias, but <code>/s</code> does not.</li>
+    <li><strong>Variables:</strong> <code>%USERPROFILE%</code> becomes <code>$env:USERPROFILE</code>. Set one with <code>$env:NAME = 'value'</code>; it lasts until you close the window.</li>
+    <li><strong>Run a program in the current folder with <code>.\</code></strong>, for example <code>.\setup.exe</code>. PowerShell does not look in the current folder on its own.</li>
+    <li><strong>Paths with spaces need quotes and <code>&amp;</code></strong> to run: <code>&amp; 'C:\Program Files\App\app.exe'</code>.</li>
+    <li><strong>Old tools still work.</strong> <code>ipconfig</code>, <code>ping</code>, <code>robocopy</code>, and <code>netstat</code> run fine from PowerShell. They return text instead of objects.</li>
+    <li><strong>Batch files (<code>.bat</code>, <code>.cmd</code>) still run</strong>, but scripts (<code>.ps1</code>) follow the <a href="/guides/execution-policy/">execution policy</a>.</li>
+  </ul>
+
+  {% include "edit-link.njk" %}
+</article>

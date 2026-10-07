@@ -1,14 +1,39 @@
 <!DOCTYPE html>
-<html lang="en" data-base="{{ '/' | url }}">
+<html lang="en" data-base="{{ '/' | url }}" data-repo="{{ site.repo }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% if title and title != site.title %}{{ title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
-  <meta name="description" content="{{ description or summary or site.description }}">
+  {%- set pageTitle = title -%}
+  {%- if cmdlet and title %}{% set pageTitle = title + " (" + cmdlet + ")" %}{% endif -%}
+  {%- set fullTitle = (pageTitle + " | " + site.title) if (pageTitle and pageTitle != site.title) else (site.title + ": " + site.tagline) -%}
+  {%- set metaDescription = description or summary or site.description -%}
+  <title>{{ fullTitle }}</title>
+  <meta name="description" content="{{ metaDescription }}">
   <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#012456">
+  <meta property="og:type" content="{% if cmdlet %}article{% else %}website{% endif %}">
+  <meta property="og:site_name" content="{{ site.title }}">
+  <meta property="og:title" content="{{ pageTitle or site.title }}">
+  <meta property="og:description" content="{{ metaDescription }}">
+  <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+  <meta property="og:image" content="{{ site.url }}{{ site.socialImage }}">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="640">
+  <meta property="og:image:alt" content="{{ site.title }}: {{ site.tagline }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ pageTitle or site.title }}">
+  <meta name="twitter:description" content="{{ metaDescription }}">
+  <meta name="twitter:image" content="{{ site.url }}{{ site.socialImage }}">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
   <link rel="stylesheet" href="/assets/vendor/prism.css">
   <link rel="stylesheet" href="/assets/css/site.css">
+  <script type="application/ld+json">{{ { title: pageTitle, summary: metaDescription, cmdlet: cmdlet, url: page.url } | jsonLd(site) | safe }}</script>
+  {%- if site.analytics.goatcounter %}
+  <script data-goatcounter="https://{{ site.analytics.goatcounter }}.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+  <script src="/assets/js/analytics.js" defer></script>
+  {%- endif %}
 </head>
 <body class="{% if page.url == '/' %}page-home{% endif %}">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -17,9 +42,13 @@
     {{ content | safe }}
   </main>
   {% include "footer.njk" %}
+  <div id="site-status" class="visually-hidden" role="status" aria-live="polite"></div>
   <script src="/assets/js/copy.js" defer></script>
   <script src="/assets/js/search.js" defer></script>
   <script src="/assets/js/builder-render.js" defer></script>
   <script src="/assets/js/builder.js" defer></script>
+  {%- for script in extraScripts %}
+  <script src="{{ script }}" defer></script>
+  {%- endfor %}
 </body>
 </html>

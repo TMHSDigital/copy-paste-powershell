@@ -1,7 +1,14 @@
-Powershell-for-Dummies
+Copy-Paste PowerShell
 Copyright 2026 TMHSDigital
 
 This product is licensed under the Apache License, Version 2.0.
 You may obtain a copy of the License at:
 
     http://www.apache.org/licenses/LICENSE-2.0
+
+This product includes the Prism syntax highlighter theme (prism-okaidia),
+Copyright (c) 2012 Lea Verou, licensed under the MIT License.
+https://github.com/PrismJS/prism
+
+PowerShell is a trademark of Microsoft Corporation. This project is a
+community resource and is not affiliated with or endorsed by Microsoft.

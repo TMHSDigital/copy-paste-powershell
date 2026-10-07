@@ -29,6 +29,10 @@ jobs:
       - run: npm test
       - run: npm run build:gh
       - run: npm run check-links
+      - name: Accessibility (axe, light and dark)
+        run: |
+          npx playwright install --with-deps chromium
+          npm run a11y
       - name: Upload Pages artifact
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

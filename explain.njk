@@ -1,0 +1,39 @@
+---
+layout: base.njk
+title: Explain a PowerShell command
+description: Paste a PowerShell command you found online and see what each part does, in plain English, with warnings for anything that deletes, downloads, or disables protection. Nothing is run.
+permalink: /explain/
+extraScripts:
+  - /assets/js/explain.js
+---
+<article class="prose prose-wide">
+  <header class="page-head">
+    <p class="kicker">Explain</p>
+    <h1>What does this command do?</h1>
+    <p class="lede">Paste a line from a forum, a colleague, or an AI chat. You get each step in plain English and a warning for anything risky. <strong>Nothing you paste is run or sent anywhere.</strong></p>
+  </header>
+
+  <label for="explain-input" class="preview-label">PowerShell to explain</label>
+  <textarea id="explain-input" class="explain-input" spellcheck="false" autocomplete="off" placeholder="Get-ChildItem -Path .\logs -Recurse -Filter *.tmp | Remove-Item -Force"></textarea>
+  <div class="explain-examples" role="group" aria-label="Examples">
+    <button type="button" class="btn btn-small btn-secondary" data-example="Get-ChildItem -Path .\logs -Recurse -Filter *.tmp | Remove-Item -Force">Clean up temp files</button>
+    <button type="button" class="btn btn-small btn-secondary" data-example="Get-Process | Sort-Object CPU -Descending | Select-Object -First 5">Top 5 processes</button>
+    <button type="button" class="btn btn-small btn-secondary" data-example="iwr https://example.com/install.ps1 | iex">Download and run</button>
+    <button type="button" class="btn btn-small btn-secondary" data-example="Import-Csv .\users.csv | Where-Object { $_.Department -eq 'Sales' } | Export-Csv .\sales.csv -NoTypeInformation">Filter a CSV</button>
+  </div>
+
+  <div id="explain-output" aria-live="polite">
+    <div id="explain-risks" hidden>
+      <h2>Before you run it</h2>
+      <ul class="risk-list" id="explain-risk-list"></ul>
+    </div>
+    <div id="explain-steps-wrap" hidden>
+      <h2>Step by step</h2>
+      <ol class="explain-steps" id="explain-steps"></ol>
+    </div>
+  </div>
+
+  <p class="callout">This is a reading aid, not a security scanner. It knows the {{ collections.commands.length }} commands on this site and a list of common risky patterns. If something is not recognised, look it up before you run it. When in doubt, add <code>-WhatIf</code>.</p>
+
+  {% include "edit-link.njk" %}
+</article>

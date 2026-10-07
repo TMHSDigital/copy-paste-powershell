@@ -53,7 +53,7 @@ layout: base.njk
       <span class="terminal-dots" aria-hidden="true"></span>
       <span class="terminal-title">{{ ps1Name or "script.ps1" }}</span>
       <div class="terminal-actions">
-        <button type="button" class="btn btn-small" data-copy-target="#script-source">Copy</button>
+        <button type="button" class="btn btn-small" data-copy-target="#script-source" data-track="script-copy" data-track-value="{{ page.fileSlug }}" aria-label="Copy the {{ ps1Name }} script">Copy</button>
         {% if ps1Name %}
           <a class="btn btn-small btn-secondary" href="{{ page.url }}{{ ps1Name }}" download>Download</a>
         {% endif %}
@@ -61,4 +61,13 @@ layout: base.njk
     </div>
     <pre id="script-source" class="terminal-body command-pre"><code class="language-powershell">{{ source | highlightPowershell | safe }}</code></pre>
   </div>
+  <p class="callout" role="note">Downloaded it? Windows blocks scripts from the internet until you unblock them: <code>Unblock-File -Path .\{{ ps1Name }}</code>. See <a href="/guides/run-a-script/">Run a script</a>.</p>
+
+  <p class="edit-link">
+    <a href="{{ site.repo }}/edit/main/{{ page.inputPath | replace('./', '') }}">Edit this page on GitHub</a>
+    <span aria-hidden="true">·</span>
+    <a href="{{ site.repo }}/edit/main/{{ page.inputPath | replace('./', '') | replace('index.md', ps1Name) }}">Edit {{ ps1Name }}</a>
+    <span aria-hidden="true">·</span>
+    <a href="{{ site.repo }}/issues/new?template=broken-snippet.yml&amp;page={{ (site.url + page.url) | urlencode }}">Report a problem</a>
+  </p>
 </article>

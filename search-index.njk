@@ -12,9 +12,12 @@ eleventyExcludeFromCollections: true
       cmdlet: item.data.cmdlet,
       aliases: item.data.aliases or [],
       topics: item.data.topics or [],
+      equivalents: item.data.equivalents | equivalentList,
       category: item.data.category,
       difficulty: item.data.difficulty,
       command: item.data.command,
+      platforms: item.data.platforms or [],
+      admin: item.data.admin or false,
       type: "command"
     } | json | safe }}{% if not loop.last %},{% endif %}
   {%- endfor %}
@@ -51,5 +54,11 @@ eleventyExcludeFromCollections: true
       type: "guide"
     } | json | safe }}{% if not loop.last %},{% endif %}
   {%- endfor %}
+  ],
+  "pages": [
+    {"title": "From bash to PowerShell", "url": "/from-bash/", "summary": "bash and Linux commands translated to PowerShell", "topics": ["bash", "linux", "translate"], "type": "tool"},
+    {"title": "From cmd to PowerShell", "url": "/from-cmd/", "summary": "cmd.exe commands translated to PowerShell", "topics": ["cmd", "dos", "translate"], "type": "tool"},
+    {"title": "Explain a command", "url": "/explain/", "summary": "Paste a PowerShell line and see what each part does", "topics": ["explain", "safety"], "type": "tool"},
+    {"title": "Printable cheat sheet", "url": "/cheat-sheet/", "summary": "Every command on one printable page", "topics": ["print", "pdf", "cheat sheet"], "type": "tool"}
   ]
 }

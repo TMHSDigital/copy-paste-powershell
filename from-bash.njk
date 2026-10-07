@@ -1,0 +1,48 @@
+---
+layout: base.njk
+title: From bash to PowerShell
+description: The PowerShell equivalent of common bash and Linux commands (ls, grep, cat, find, tail, curl, ps, kill), plus the gotchas that trip up Linux users.
+permalink: /from-bash/
+---
+<article class="prose prose-wide">
+  <header class="page-head">
+    <p class="kicker">Translate</p>
+    <h1>From bash to PowerShell</h1>
+    <p class="lede">You know <code>ls</code>, <code>grep</code>, and <code>tail -f</code>. Here is what to type in PowerShell instead. Copy the right-hand column. Also see <a href="/from-cmd/">From cmd</a>.</p>
+  </header>
+
+  <div class="table-wrap">
+    <table class="translate-table">
+      <thead>
+        <tr><th scope="col">bash</th><th scope="col">PowerShell</th><th scope="col">Learn more</th></tr>
+      </thead>
+      <tbody>
+        {%- for item in collections.equivalents %}
+          {%- if item.data.equivalents.bash %}
+          {%- set ps = item.data.equivalents.powershell or item.data.command %}
+          <tr>
+            <td><code>{{ item.data.equivalents.bash }}</code></td>
+            <td><div class="cmd-cell"><code>{{ ps }}</code><button type="button" class="btn btn-small" data-copy="{{ ps | e }}" data-track-value="from-bash/{{ item.fileSlug }}">Copy</button></div></td>
+            <td><a href="{{ item.url }}">{{ item.data.cmdlet }}</a></td>
+          </tr>
+          {%- endif %}
+        {%- endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Gotchas for bash users</h2>
+  <ul class="gotchas">
+    <li><strong>Output is objects, not text.</strong> <code>Get-ChildItem | Select-Object Name, Length</code> picks properties. You rarely need <code>awk</code> or <code>cut</code>. See <a href="/guides/pipelines/">Pipelines</a>.</li>
+    <li><strong><code>ls -la</code> does not work.</strong> <code>ls</code> is an alias for <code>Get-ChildItem</code>, which has its own parameters. Use <code>Get-ChildItem -Force</code> to include hidden files.</li>
+    <li><strong><code>rm -rf</code> becomes <code>Remove-Item -Recurse -Force</code>.</strong> Add <code>-WhatIf</code> first. There is no recycle bin.</li>
+    <li><strong><code>curl</code> and <code>wget</code> are aliases on Windows PowerShell 5.1</strong> for <code>Invoke-WebRequest</code>, so flags like <code>-O</code> fail. PowerShell 7 removed those aliases, so <code>curl</code> runs the real curl.exe.</li>
+    <li><strong>Comparison uses words.</strong> <code>-eq</code>, <code>-ne</code>, <code>-gt</code>, <code>-lt</code>. A bare <code>&gt;</code> is redirection and will create a file. See <a href="/guides/operators/">Operators</a>.</li>
+    <li><strong>Environment variables</strong> are <code>$env:PATH</code>, not <code>$PATH</code>. Set one with <code>$env:NAME = 'value'</code>.</li>
+    <li><strong><code>&amp;&amp;</code> and <code>||</code></strong> only work in PowerShell 7. In 5.1, use <code>;</code> or <code>if ($?) { ... }</code>.</li>
+    <li><strong>Case-insensitive by default.</strong> <code>-eq</code>, <code>-like</code>, and <code>Select-String</code> ignore case. Use <code>-ceq</code>, <code>-clike</code>, or <code>-CaseSensitive</code> when it matters.</li>
+    <li><strong>Strings:</strong> double quotes expand <code>$variables</code>, single quotes do not. The escape character is the backtick <code>`</code>, not the backslash.</li>
+  </ul>
+
+  {% include "edit-link.njk" %}
+</article>

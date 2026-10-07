@@ -1,0 +1,28 @@
+---
+layout: base.njk
+title: Page not found
+description: That page does not exist. Search the commands, scripts, and guides instead.
+permalink: /404.html
+eleventyExcludeFromCollections: true
+---
+<header class="page-head">
+  <p class="kicker">Error 404</p>
+  <h1>That page is not here</h1>
+  <p class="lede"><code>Get-Item: Cannot find path because it does not exist.</code> The page may have moved. Search for it instead:</p>
+  <form class="hero-search hero-search-light" role="search" action="/" method="get">
+    <label class="visually-hidden" for="nf-q">Search</label>
+    <span class="prompt" aria-hidden="true">PS&gt;</span>
+    <input id="nf-q" name="q" type="search" placeholder="Search commands, scripts, guides" autocomplete="off" data-search-input data-search-primary>
+  </form>
+</header>
+
+<section>
+  <h2>Popular starting points</h2>
+  <ul class="related-list">
+    {% for item in collections.featuredCommands %}
+      <li><a href="{{ item.url }}"><code>{{ item.data.cmdlet }}</code> {{ item.data.title }}</a></li>
+    {% endfor %}
+    <li><a href="/guides/">Beginner guides</a></li>
+    <li><a href="/">Home</a></li>
+  </ul>
+</section>

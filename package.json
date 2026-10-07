@@ -15,17 +15,22 @@
     "hygiene": "node tools/hygiene-check.mjs",
     "test": "node --test \"tests/**/*.test.mjs\"",
     "check-links": "node tools/check-links.mjs --prefix Powershell-for-Dummies",
-    "test:ps": "pwsh -NoProfile -File tests/run.ps1 -Lint"
+    "test:ps": "pwsh -NoProfile -File tests/run.ps1 -Lint",
+    "a11y": "node tools/a11y.mjs --prefix Powershell-for-Dummies"
   },
   "dependencies": {
     "@11ty/eleventy": "^3.1.2",
     "gray-matter": "^4.0.3",
-    "prismjs": "^1.30.0",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "prismjs": "^1.30.0"
   },
   "overrides": {
     "gray-matter": {
       "js-yaml": "$js-yaml"
     }
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "playwright": "1.63.0"
   }
 }

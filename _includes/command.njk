@@ -2,7 +2,7 @@
 layout: base.njk
 ---
 <article class="prose">
-  <p class="crumb"><a href="/commands/">Commands</a> / {{ category | categoryLabel }}</p>
+  <p class="crumb"><a href="/commands/">Commands</a> / <a href="/commands/#{{ category }}">{{ category | categoryLabel }}</a></p>
   <header class="page-head">
     <p class="kicker">{{ cmdlet }}</p>
     <h1>{{ title }}</h1>
@@ -19,16 +19,70 @@ layout: base.njk
     <div class="terminal-bar">
       <span class="terminal-dots" aria-hidden="true"></span>
       <span class="terminal-title">{{ cmdlet }}</span>
-      <button type="button" class="btn btn-small" data-copy="{{ command | e }}">Copy</button>
+      <button type="button" class="btn btn-small" data-copy="{{ command | e }}" data-track-value="{{ page.fileSlug }}">Copy</button>
     </div>
-    <pre class="terminal-body command-pre"><span class="prompt">PS&gt;</span> <code class="language-powershell">{{ command }}</code></pre>
+    <pre class="terminal-body command-pre"><span class="prompt" aria-hidden="true">PS&gt;</span> <code class="language-powershell">{{ command | highlightPowershell | safe }}</code></pre>
   </div>
 
+  {% set docsUrl = docs or (cmdlet | learnUrl(module)) %}
+  <dl class="glance" aria-label="At a glance">
+    <div>
+      <dt>Works on</dt>
+      <dd>{% for p in (platforms or ["windows", "linux", "macos"]) %}<span class="platform">{{ p | platformLabel }}</span>{% endfor %}</dd>
+    </div>
+    <div>
+      <dt>PowerShell</dt>
+      <dd>{{ minVersion or "5.1" }} and later</dd>
+    </div>
+    {% if admin %}
+    <div>
+      <dt>Permissions</dt>
+      <dd><span class="badge badge-admin">Run as administrator</span></dd>
+    </div>
+    {% endif %}
+    {% if docsUrl %}
+    <div>
+      <dt>Reference</dt>
+      <dd><a href="{{ docsUrl }}">Microsoft Learn: {{ cmdlet }}</a></dd>
+    </div>
+    {% endif %}
+  </dl>
+
   {% if warning %}
-    <p class="callout callout-warn" role="note">{{ warning }}</p>
+    <p class="callout callout-warn" role="note"><strong>Careful:</strong> {{ warning }}</p>
+  {% endif %}
+
+  {% if notes %}
+    <ul class="version-notes">
+      {% for version, note in notes | dictsort %}
+        <li><span class="badge badge-quiet">{% if version == "all" %}All versions{% else %}PowerShell {{ version }}{% endif %}</span> {{ note }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if output %}
+    <h2>What you'll see</h2>
+    <div class="terminal terminal-output no-copy">
+      <pre class="terminal-body"><code>{{ output }}</code></pre>
+    </div>
   {% endif %}
 
   {{ content | safe }}
+
+  {% if equivalents and (equivalents.bash or equivalents.cmd) %}
+    <h2>Coming from another shell</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Shell</th><th>What you might type</th></tr></thead>
+        <tbody>
+          {% if equivalents.bash %}<tr><td>bash / zsh</td><td><code>{{ equivalents.bash }}</code></td></tr>{% endif %}
+          {% if equivalents.cmd %}<tr><td>cmd.exe</td><td><code>{{ equivalents.cmd }}</code></td></tr>{% endif %}
+        </tbody>
+      </table>
+    </div>
+    {% if equivalents.note %}<p>{{ equivalents.note }}</p>{% endif %}
+    <p>More in <a href="/from-bash/">From bash</a> and <a href="/from-cmd/">From cmd</a>.</p>
+  {% endif %}
 
   {% set related = collections.commands | relatedCommands(page.url, topics) %}
   {% if related.length %}
@@ -39,4 +93,6 @@ layout: base.njk
       {% endfor %}
     </ul>
   {% endif %}
+
+  {% include "edit-link.njk" %}
 </article>

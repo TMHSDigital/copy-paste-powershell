@@ -1,25 +1,26 @@
 <header class="site-header">
   <div class="masthead">
     <div class="wrap masthead-inner">
-      <a class="brand" href="/">
-        <span class="brand-topic">PowerShell</span>
+      <a class="brand" href="/" aria-label="{{ site.title }} home">
+        <span class="brand-mark" aria-hidden="true">PS&gt;_</span>
+        <span class="brand-name"><span class="brand-copy">Copy-Paste</span> <span class="brand-ps">PowerShell</span></span>
       </a>
       <form class="header-search" role="search" action="/" method="get">
-        <label class="visually-hidden" for="header-q">Search</label>
+        <label class="visually-hidden" for="header-q">Search commands, scripts, and guides</label>
         <span class="prompt" aria-hidden="true">PS&gt;</span>
-        <input id="header-q" name="q" type="search" placeholder="Search" autocomplete="off" data-search-input>
+        <input id="header-q" name="q" type="search" placeholder="Search: ls, zip, ping..." autocomplete="off" data-search-input data-search-overlay>
       </form>
     </div>
   </div>
-  <div class="series-bar">
-    <div class="wrap series-inner">
-      <span class="brand-series">FOR DUMMIES</span>
-      <nav class="nav" aria-label="Primary">
-        <a href="/commands/" {% if '/commands/' in page.url %}aria-current="page"{% endif %}>Commands</a>
-        <a href="/scripts/" {% if '/scripts/' in page.url %}aria-current="page"{% endif %}>Scripts</a>
-        <a href="/builders/" {% if '/builders/' in page.url %}aria-current="page"{% endif %}>Builders</a>
-        <a href="/guides/" {% if '/guides/' in page.url %}aria-current="page"{% endif %}>Guides</a>
-      </nav>
+  <nav class="nav-bar" aria-label="Primary">
+    <div class="wrap nav">
+      <a href="/commands/" {% if page.url.startsWith('/commands/') %}aria-current="page"{% endif %}>Commands</a>
+      <a href="/scripts/" {% if page.url.startsWith('/scripts/') %}aria-current="page"{% endif %}>Scripts</a>
+      <a href="/builders/" {% if page.url.startsWith('/builders/') %}aria-current="page"{% endif %}>Builders</a>
+      <a href="/guides/" {% if page.url.startsWith('/guides/') %}aria-current="page"{% endif %}>Guides</a>
+      <a href="/from-bash/" {% if page.url.startsWith('/from-') %}aria-current="page"{% endif %}>From bash/cmd</a>
+      <a href="/explain/" {% if page.url.startsWith('/explain/') %}aria-current="page"{% endif %}>Explain</a>
+      <a href="/cheat-sheet/" {% if page.url.startsWith('/cheat-sheet/') %}aria-current="page"{% endif %}>Cheat sheet</a>
     </div>
-  </div>
+  </nav>
 </header>

@@ -36,8 +36,15 @@ function sortByTitle(a, b) {
 export default function (eleventyConfig) {
   eleventyConfig.addPlugin(HtmlBasePlugin);
 
+  // The dev server's emulated passthrough cannot serve files copied out of
+  // node_modules (prism.css 404s under npm start), so copy for real.
+  eleventyConfig.setServerPassthroughCopyBehavior("copy");
+
   eleventyConfig.ignores.add("README.md");
   eleventyConfig.ignores.add("CONTRIBUTING.md");
+  eleventyConfig.ignores.add("CODE_OF_CONDUCT.md");
+  eleventyConfig.ignores.add("SECURITY.md");
+  eleventyConfig.ignores.add(".github/**");
   eleventyConfig.ignores.add("NOTICE");
   eleventyConfig.ignores.add("LICENSE");
   eleventyConfig.ignores.add("commands/_template.md");
@@ -178,6 +185,87 @@ export default function (eleventyConfig) {
   );
 
   eleventyConfig.addFilter("orEmpty", (value) => (value === undefined || value === null ? "" : value));
+
+  eleventyConfig.addFilter("platformLabel", (slug) => ({ windows: "Windows", linux: "Linux", macos: "macOS" })[slug] || slug);
+
+  // Microsoft Learn reference page for a cmdlet, from its module name.
+  eleventyConfig.addFilter("learnUrl", (cmdlet, module) => {
+    if (!cmdlet || !module) {
+      return "";
+    }
+    return `https://learn.microsoft.com/powershell/module/${String(module).toLowerCase()}/${String(cmdlet).toLowerCase()}`;
+  });
+
+  // Everything the /commands/ filter should match on, lowercased.
+  eleventyConfig.addFilter("commandSearchText", (item) => {
+    const d = item.data;
+    return [
+      d.cmdlet,
+      d.title,
+      d.summary,
+      d.category,
+      ...(d.aliases || []),
+      ...(d.topics || []),
+      ...Object.entries(d.equivalents || {})
+        .filter(([key]) => key !== "note")
+        .map(([, value]) => value),
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+  });
+
+  // schema.org data: WebSite with a search action everywhere, plus a
+  // TechArticle for command pages.
+  eleventyConfig.addFilter("jsonLd", (pageData, site) => {
+    const url = `${site.url}${pageData.url || "/"}`;
+    const graph = [
+      {
+        "@type": "WebSite",
+        "@id": `${site.url}/#website`,
+        name: site.title,
+        url: `${site.url}/`,
+        description: site.description,
+        potentialAction: {
+          "@type": "SearchAction",
+          target: { "@type": "EntryPoint", urlTemplate: `${site.url}/?q={search_term_string}` },
+          "query-input": "required name=search_term_string",
+        },
+      },
+    ];
+    if (pageData.cmdlet) {
+      graph.push({
+        "@type": "TechArticle",
+        headline: `${pageData.title}`,
+        description: pageData.summary,
+        url,
+        about: { "@type": "SoftwareApplication", name: "PowerShell", applicationCategory: "DeveloperApplication" },
+        keywords: pageData.cmdlet,
+        isPartOf: { "@id": `${site.url}/#website` },
+      });
+    }
+    return JSON.stringify({ "@context": "https://schema.org", "@graph": graph })
+      .replace(/</g, "\\u003c")
+      .replace(/>/g, "\\u003e")
+      .replace(/&/g, "\\u0026");
+  });
+
+  eleventyConfig.addFilter("equivalentList", (equivalents) =>
+    Object.entries(equivalents || {})
+      .filter(([key, value]) => key !== "note" && key !== "powershell" && value)
+      .map(([, value]) => String(value)),
+  );
+
+  eleventyConfig.addCollection("sitemapUrls", (api) => {
+    return [...new Set(api.getAll().map((item) => item.url).filter((url) => url && url.endsWith("/")))].sort();
+  });
+
+  eleventyConfig.addCollection("equivalents", (api) => {
+    return api
+      .getFilteredByGlob(CONTENT_GLOBS.commands)
+      .filter((item) => item.data.equivalents)
+      .sort(sortByTitle);
+  });
 
   return {
     dir: {
