@@ -28,14 +28,15 @@ fields:
     label: Include subfolders
     type: checkbox
     default: false
-    explain: "-Recurse copies everything inside the folder, not just the folder itself."
+    help: Copy only. Move always takes the whole folder, subfolders included.
+    explain: "With Copy, -Recurse copies everything inside the folder, not just the folder itself."
   - name: whatIf
     label: Preview only (-WhatIf)
     type: checkbox
     default: true
     explain: "-WhatIf only prints what would happen. Nothing is copied or moved until you remove it."
 template: |
-  {{action}} -LiteralPath {{source:q}} -Destination {{destination:q}}{{#recurse}} -Recurse{{/recurse}}{{#whatIf}} -WhatIf{{/whatIf}}
+  {{action}} -LiteralPath {{source:q}} -Destination {{destination:q}}{{#action_Copy_Item}}{{#recurse}} -Recurse{{/recurse}}{{/action_Copy_Item}}{{#whatIf}} -WhatIf{{/whatIf}}
 ---
 
 Pick copy or move, fill in the paths, and keep `-WhatIf` on until the preview looks right. Move deletes the source.

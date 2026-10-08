@@ -18,6 +18,7 @@ fields:
   - name: port
     label: Port (used when TCP is checked)
     type: number
+    requiredWhen: { tcp: true }
     min: 1
     max: 65535
     default: "443"

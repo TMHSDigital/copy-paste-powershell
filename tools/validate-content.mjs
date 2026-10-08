@@ -218,6 +218,31 @@ for (const file of listMarkdown("builders")) {
       fail(file, `checkbox '${name}' cannot be quoted; use {{#${name}}}...{{/${name}}}`);
     }
   }
+  // Sections must close in order, and a section may not sit inside another
+  // section with the same name (the renderer cannot tell them apart).
+  const open = [];
+  for (const [, sigil, name] of template.matchAll(/\{\{([#^/])(\w+)\}\}/g)) {
+    if (sigil !== "/") {
+      if (open.includes(name)) {
+        fail(file, `section {{${sigil}${name}}} is nested inside another '${name}' section`);
+      }
+      open.push(name);
+    } else if (open.at(-1) === name) {
+      open.pop();
+    } else {
+      fail(file, `{{/${name}}} closes ${open.length ? `'${open.at(-1)}'` : "nothing"}`);
+    }
+  }
+  if (open.length) {
+    fail(file, `unclosed section(s): ${open.join(", ")}`);
+  }
+  for (const field of data.fields) {
+    for (const other of Object.keys(field?.requiredWhen || {})) {
+      if (!byName.has(other)) {
+        fail(file, `field '${field.name}' requiredWhen names unknown field '${other}'`);
+      }
+    }
+  }
   const unclosed = template.match(/\{\{(?![#^/]?\w+(:q)?\}\})[^}]*\}\}/g);
   if (unclosed) {
     fail(file, `template has malformed placeholders: ${unclosed.join(", ")}`);

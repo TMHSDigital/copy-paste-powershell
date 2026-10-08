@@ -105,6 +105,28 @@ Describe 'find-replace builder' {
     }
 }
 
+Describe 'copy-files builder' {
+    It 'moves a folder with "Include subfolders" ticked' {
+        $box = New-Sandbox
+        $src = Join-Path $box 'src'
+        [System.IO.Directory]::CreateDirectory((Join-Path $src 'sub')) | Out-Null
+        Set-Content -LiteralPath (Join-Path $src 'sub\a.txt') -Value 'a'
+        Invoke-BuilderScript 'copy-files' @{ action = 'Move-Item'; source = $src; destination = (Join-Path $box 'dst'); recurse = $true; whatIf = $false }
+        Test-Literal $box 'dst\sub\a.txt' | Should -BeTrue
+        Test-Literal $box 'src' | Should -BeFalse
+    }
+
+    It 'copies a folder tree with "Include subfolders" ticked' {
+        $box = New-Sandbox
+        $src = Join-Path $box 'src'
+        [System.IO.Directory]::CreateDirectory((Join-Path $src 'sub')) | Out-Null
+        Set-Content -LiteralPath (Join-Path $src 'sub\a.txt') -Value 'a'
+        Invoke-BuilderScript 'copy-files' @{ action = 'Copy-Item'; source = $src; destination = (Join-Path $box 'dst'); recurse = $true; whatIf = $false }
+        Test-Literal $box 'dst\sub\a.txt' | Should -BeTrue
+        Test-Literal $box 'src\sub\a.txt' | Should -BeTrue
+    }
+}
+
 Describe 'remove-old-files builder' {
     It 'deletes only names that really match the filter' {
         $box = New-Sandbox

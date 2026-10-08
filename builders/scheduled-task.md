@@ -45,6 +45,7 @@ fields:
   - name: time
     label: Time (daily and weekly)
     type: time
+    requiredWhen: { frequency: [daily, weekly] }
     default: "09:00"
 template: |
   # Windows only. If you get "Access is denied", open PowerShell as administrator.

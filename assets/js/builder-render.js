@@ -57,6 +57,20 @@
       }
       values[field.name] = field.type === "number" ? "" : text;
     }
+    // requiredWhen: { otherField: value | [values] } makes a field required
+    // only while every listed field has one of those values.
+    for (const field of spec.fields || []) {
+      if (!field.requiredWhen || errors[field.name] || String(values[field.name] ?? "").trim() !== "") {
+        continue;
+      }
+      const applies = Object.entries(field.requiredWhen).every(([other, wanted]) => {
+        const list = Array.isArray(wanted) ? wanted : [wanted];
+        return list.some((w) => (typeof w === "boolean" ? values[other] === w : String(values[other]) === String(w)));
+      });
+      if (applies) {
+        errors[field.name] = `${field.label} is required.`;
+      }
+    }
     return { values, errors };
   }
 
@@ -68,13 +82,18 @@
   // {{name:q}}     single-quoted PowerShell literal
   // {{#name}}..{{/name}}  included when truthy
   // {{^name}}..{{/name}}  included when falsy
+  //
+  // Sections may nest when their names differ: each pass expands the first
+  // section, and passes repeat until none is left. (A section inside one with
+  // the same name cannot work; tools/validate-content.mjs rejects it.)
   function renderTemplate(template, data) {
-    let out = String(template).replace(/\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, key, inner) => {
-      return isTruthy(data[key]) ? inner : "";
-    });
-    out = out.replace(/\{\{\^(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, key, inner) => {
-      return isTruthy(data[key]) ? "" : inner;
-    });
+    let out = String(template);
+    for (let previous = null; previous !== out; ) {
+      previous = out;
+      out = out.replace(/\{\{([#^])(\w+)\}\}([\s\S]*?)\{\{\/\2\}\}/, (_, sigil, key, inner) => {
+        return isTruthy(data[key]) === (sigil === "#") ? inner : "";
+      });
+    }
     out = out.replace(/\{\{(\w+)(:q)?\}\}/g, (_, key, quoted) => {
       const value = data[key];
       if (quoted) {

@@ -76,3 +76,52 @@ for (const file of listMarkdown("builders")) {
     }
   });
 }
+
+test("sections nest when their names differ", () => {
+  const t = "A{{#x}}[x{{#y}} y{{/y}}{{^y}} not-y{{/y}}]{{/x}}B";
+  assert.equal(R.renderTemplate(t, { x: true, y: true }), "A[x y]B\n");
+  assert.equal(R.renderTemplate(t, { x: true, y: false }), "A[x not-y]B\n");
+  assert.equal(R.renderTemplate(t, { x: false, y: true }), "AB\n");
+});
+
+test("requiredWhen only requires a field for the listed choices", () => {
+  const spec = {
+    fields: [
+      { name: "freq", label: "When", type: "select", default: "daily", options: [{ value: "daily" }, { value: "logon" }] },
+      { name: "tcp", label: "TCP", type: "checkbox" },
+      { name: "time", label: "Time", type: "time", requiredWhen: { freq: ["daily"] } },
+      { name: "port", label: "Port", type: "number", min: 1, max: 9, requiredWhen: { tcp: true } },
+    ],
+    template: "{{time}} {{port}}",
+  };
+  assert.ok(R.render(spec, { freq: "daily", time: "" }).errors.time);
+  assert.equal(R.render(spec, { freq: "logon", time: "" }).errors.time, undefined);
+  assert.ok(R.render(spec, { freq: "logon", tcp: true, port: "" }).errors.port);
+  assert.equal(R.render(spec, { freq: "logon", tcp: false, port: "" }).errors.port, undefined);
+});
+
+test("no builder renders a dangling parameter or an empty -At", () => {
+  for (const file of listMarkdown("builders")) {
+    const { data } = readFrontmatter(file);
+    // Clear one field at a time, since clearing a required one only shows an error.
+    const blankable = (data.fields || []).filter((f) => f.type !== "select" && f.type !== "checkbox");
+    for (const variant of builderVariants(data)) {
+      for (const raw of [variant.raw, ...blankable.map((f) => ({ ...variant.raw, [f.name]: "" }))]) {
+        const result = R.render(data, raw);
+        if (Object.keys(result.errors).length) {
+          continue;
+        }
+        // Parameters that need a value must never end a line or get ''.
+        assert.doesNotMatch(result.script, /-(At|Port|Filter|Path|LiteralPath|Destination|DestinationPath|ComputerName|TaskName|NewName)(\s*$| '')/m, `${file} (${variant.label}) renders a parameter with no value:\n${result.script}`);
+      }
+    }
+  }
+});
+
+test("copy builder: Move never gets -Recurse", () => {
+  const { data } = readFrontmatter("builders/copy-files.md");
+  const move = R.render(data, { action: "Move-Item", source: "a", destination: "b", recurse: true });
+  assert.doesNotMatch(move.script, /-Recurse/);
+  const copy = R.render(data, { action: "Copy-Item", source: "a", destination: "b", recurse: true });
+  assert.match(copy.script, /-Recurse/);
+});
