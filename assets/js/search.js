@@ -33,6 +33,17 @@
     }
   }
 
+  // Count a search that found nothing once the visitor stops typing, not on
+  // every keystroke. analytics.js scrubs the text before it is sent.
+  let noResultsTimer = null;
+  function trackNoResults(q) {
+    window.clearTimeout(noResultsTimer);
+    noResultsTimer = window.setTimeout(() => track("search-no-results", q), 1500);
+  }
+  function cancelNoResults() {
+    window.clearTimeout(noResultsTimer);
+  }
+
   function tokens(q) {
     return q.toLowerCase().split(/\s+/).filter(Boolean);
   }
@@ -109,7 +120,6 @@
     input.setAttribute("aria-controls", panel.id);
 
     let current = [];
-    let noResultsTimer = null;
 
     function close() {
       panel.hidden = true;
@@ -133,11 +143,10 @@
         empty.append(ask);
         panel.append(empty);
         announce("No results");
-        window.clearTimeout(noResultsTimer);
-        noResultsTimer = window.setTimeout(() => track("search-no-results", q.slice(0, 60)), 1500);
+        trackNoResults(q);
         return;
       }
-      window.clearTimeout(noResultsTimer);
+      cancelNoResults();
       const list = document.createElement("ul");
       items.slice(0, MAX_RESULTS).forEach((item) => {
         const li = document.createElement("li");
@@ -267,7 +276,9 @@
         announce(`${visible} command${visible === 1 ? "" : "s"} shown`);
       }
       if (filtered && visible === 0 && q) {
-        track("search-no-results", q.slice(0, 60));
+        trackNoResults(q);
+      } else {
+        cancelNoResults();
       }
     }
 
