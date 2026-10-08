@@ -67,6 +67,44 @@ Describe 'rename-prefix builder' {
     }
 }
 
+Describe 'find-replace builder' {
+    BeforeEach {
+        $box = New-Sandbox
+        # "café old" in four encodings.
+        $files = @{
+            'ansi.txt'    = [byte[]](0x63, 0x61, 0x66, 0xE9, 0x20, 0x6F, 0x6C, 0x64)
+            'utf8.txt'    = [System.Text.UTF8Encoding]::new($false).GetBytes("caf$([char]0xE9) old")
+            'utf8bom.txt' = [byte[]](0xEF, 0xBB, 0xBF) + [System.Text.UTF8Encoding]::new($false).GetBytes("caf$([char]0xE9) old")
+            'utf16.txt'   = [byte[]](0xFF, 0xFE) + [System.Text.Encoding]::Unicode.GetBytes("caf$([char]0xE9) old")
+        }
+        foreach ($name in $files.Keys) {
+            [System.IO.File]::WriteAllBytes((Join-Path $box $name), $files[$name])
+        }
+        $values = @{ path = $box; filter = '*.txt'; find = 'old'; replace = 'new'; apply = $true }
+    }
+
+    It 'keeps each file in its own encoding, byte-order mark included' {
+        Invoke-BuilderScript 'find-replace' $values | Out-Null
+        $expect = "caf$([char]0xE9) new"
+        [System.IO.File]::ReadAllBytes((Join-Path $box 'utf8.txt')) | Should -Be ([System.Text.UTF8Encoding]::new($false).GetBytes($expect))
+        [System.IO.File]::ReadAllBytes((Join-Path $box 'utf8bom.txt')) | Should -Be ([byte[]](0xEF, 0xBB, 0xBF) + [System.Text.UTF8Encoding]::new($false).GetBytes($expect))
+        [System.IO.File]::ReadAllBytes((Join-Path $box 'utf16.txt')) | Should -Be ([byte[]](0xFF, 0xFE) + [System.Text.Encoding]::Unicode.GetBytes($expect))
+    }
+
+    It 'skips an ANSI file and leaves its bytes alone' {
+        $out = Invoke-BuilderScript 'find-replace' $values
+        "$out" | Should -Match 'Skipped \(not UTF-8 or UTF-16 text\): .*ansi\.txt'
+        [System.IO.File]::ReadAllBytes((Join-Path $box 'ansi.txt')) | Should -Be ([byte[]](0x63, 0x61, 0x66, 0xE9, 0x20, 0x6F, 0x6C, 0x64))
+    }
+
+    It 'only counts matches in preview' {
+        $values.apply = $false
+        $out = Invoke-BuilderScript 'find-replace' $values
+        @($out | Where-Object { $_ -match '1 match' }).Count | Should -Be 3
+        [System.IO.File]::ReadAllText((Join-Path $box 'utf8.txt')) | Should -Match 'old'
+    }
+}
+
 Describe 'remove-old-files builder' {
     It 'deletes only names that really match the filter' {
         $box = New-Sandbox
