@@ -70,7 +70,7 @@ Describe 'rename-prefix builder' {
 Describe 'find-replace builder' {
     BeforeEach {
         $box = New-Sandbox
-        # "café old" in four encodings.
+        # "cafe old" with an accented e (U+00E9), in four encodings.
         $files = @{
             'ansi.txt'    = [byte[]](0x63, 0x61, 0x66, 0xE9, 0x20, 0x6F, 0x6C, 0x64)
             'utf8.txt'    = [System.Text.UTF8Encoding]::new($false).GetBytes("caf$([char]0xE9) old")

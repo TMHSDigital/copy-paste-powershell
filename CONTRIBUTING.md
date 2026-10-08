@@ -32,7 +32,7 @@ Install the PowerShell test tools once:
 
 ```powershell
 Install-Module Pester -MinimumVersion 5.5.0 -Scope CurrentUser -Force -SkipPublisherCheck
-Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
+Install-Module PSScriptAnalyzer -RequiredVersion 1.25.0 -Scope CurrentUser -Force
 ```
 
 CI runs the PowerShell tests on both Windows PowerShell 5.1 and PowerShell 7. If you can, run `./tests/run.ps1` in both.

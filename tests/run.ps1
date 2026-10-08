@@ -6,12 +6,12 @@
     Works in Windows PowerShell 5.1 and PowerShell 7. Needs Pester 5 or later:
         Install-Module Pester -MinimumVersion 5.5.0 -Scope CurrentUser -Force -SkipPublisherCheck
     and, for -Lint, PSScriptAnalyzer:
-        Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
+        Install-Module PSScriptAnalyzer -RequiredVersion 1.25.0 -Scope CurrentUser -Force
 
     The snippet tests call `node tools/extract-snippets.mjs`, so run `npm ci` first.
 
 .PARAMETER Lint
-    Also run PSScriptAnalyzer over scripts/ and module/.
+    Also run PSScriptAnalyzer over scripts/, module/, and tests/.
 
 .EXAMPLE
     ./tests/run.ps1 -Lint
@@ -36,6 +36,12 @@ if ($Lint) {
     $settings = Join-Path $repoRoot 'PSScriptAnalyzerSettings.psd1'
     $paths = @('scripts', 'module') | ForEach-Object { Join-Path $repoRoot $_ } | Where-Object { Test-Path $_ }
     $findings = @($paths | ForEach-Object { Invoke-ScriptAnalyzer -Path $_ -Recurse -Settings $settings })
+    # Tests too, minus two rules that misfire there: test helpers such as
+    # New-Sandbox do not need -WhatIf, and Pester's BeforeDiscovery variables
+    # look unused to the analyzer.
+    $testExclusions = @('PSUseShouldProcessForStateChangingFunctions', 'PSUseDeclaredVarsMoreThanAssignments')
+    $findings += @(Invoke-ScriptAnalyzer -Path (Join-Path $repoRoot 'tests') -Recurse -Settings $settings |
+            Where-Object { $testExclusions -notcontains $_.RuleName })
     if ($findings.Count -gt 0) {
         $findings | Format-Table RuleName, Severity, ScriptName, Line, Message -AutoSize -Wrap | Out-String -Width 200 | Write-Host
         Write-Host "PSScriptAnalyzer: $($findings.Count) finding(s)." -ForegroundColor Red

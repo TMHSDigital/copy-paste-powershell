@@ -43,7 +43,7 @@ jobs:
         run: node tools/build-module.mjs --package $env:VERSION --out dist
       - name: Check the package
         run: |
-          Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
+          Install-Module PSScriptAnalyzer -RequiredVersion 1.25.0 -Scope CurrentUser -Force
           $info = Test-ModuleManifest -Path ./dist/CopyPastePowerShell/CopyPastePowerShell.psd1
           "Packaged $($info.Name) $($info.Version)"
           $findings = @(Invoke-ScriptAnalyzer -Path ./dist/CopyPastePowerShell -Recurse -Settings ./PSScriptAnalyzerSettings.psd1)
