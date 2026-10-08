@@ -1,5 +1,5 @@
 // Checks every internal link and asset reference in the built site.
-//   node tools/check-links.mjs [--prefix Powershell-for-Dummies]
+//   node tools/check-links.mjs [--prefix copy-paste-powershell]
 // Run after a build. External links are not fetched.
 import fs from "node:fs";
 import path from "node:path";

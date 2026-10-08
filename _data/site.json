@@ -2,8 +2,8 @@
   "title": "Copy-Paste PowerShell",
   "tagline": "Plain-English PowerShell you can copy, paste, and trust.",
   "description": "Plain-English PowerShell for beginners: commands to copy, safe scripts with -WhatIf, and fill-in-the-blank builders.",
-  "repo": "https://github.com/TMHSDigital/Powershell-for-Dummies",
-  "url": "https://tmhsdigital.github.io/Powershell-for-Dummies",
+  "repo": "https://github.com/TMHSDigital/copy-paste-powershell",
+  "url": "https://tmhsdigital.github.io/copy-paste-powershell",
   "socialImage": "/assets/social.png",
   "analytics": {
     "goatcounter": ""

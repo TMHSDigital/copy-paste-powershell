@@ -1,5 +1,5 @@
 // Runs axe-core against representative built pages in light and dark mode.
-//   npm run build:gh && node tools/a11y.mjs --prefix Powershell-for-Dummies
+//   npm run build:gh && node tools/a11y.mjs --prefix copy-paste-powershell
 // Fails on serious or critical violations. Needs: npx playwright install chromium
 import fs from "node:fs";
 import http from "node:http";

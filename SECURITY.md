@@ -4,7 +4,7 @@
 
 Please **do not** open a public issue for security problems.
 
-Report privately through GitHub: **Security > Report a vulnerability** on this repository, or go straight to [the private advisory form](https://github.com/TMHSDigital/Powershell-for-Dummies/security/advisories/new).
+Report privately through GitHub: **Security > Report a vulnerability** on this repository, or go straight to [the private advisory form](https://github.com/TMHSDigital/copy-paste-powershell/security/advisories/new).
 
 Things we especially want to hear about:
 

@@ -2,22 +2,22 @@
 
 **Plain-English PowerShell you can copy, paste, and trust.**
 
-[![CI and Pages](https://github.com/TMHSDigital/Powershell-for-Dummies/actions/workflows/ci.yml/badge.svg)](https://github.com/TMHSDigital/Powershell-for-Dummies/actions/workflows/ci.yml)
+[![CI and Pages](https://github.com/TMHSDigital/copy-paste-powershell/actions/workflows/ci.yml/badge.svg)](https://github.com/TMHSDigital/copy-paste-powershell/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-### **[Open the site: tmhsdigital.github.io/Powershell-for-Dummies](https://tmhsdigital.github.io/Powershell-for-Dummies/)**
+### **[Open the site: tmhsdigital.github.io/copy-paste-powershell](https://tmhsdigital.github.io/copy-paste-powershell/)**
 
 ![A builder page: fill in a folder, prefix, and filter, and get a ready-to-run rename script with -WhatIf](.github/screenshot-builder.png)
 
 ## What's inside
 
-- **[Commands](https://tmhsdigital.github.io/Powershell-for-Dummies/commands/)**: 70+ everyday cmdlets, each with a one-click copyable one-liner, a plain-English explanation, which OS and PowerShell version it works on, whether it needs admin, and what the output looks like.
-- **[Scripts](https://tmhsdigital.github.io/Powershell-for-Dummies/scripts/)**: ready-to-run `.ps1` files (backups, cleanup, bulk rename, inventories, host checks). Every script that changes something previews first and supports `-WhatIf`.
-- **[Builders](https://tmhsdigital.github.io/Powershell-for-Dummies/builders/)**: fill in a short form and get a working command or script: copy, rename, find and replace, zip, delete old files, schedule a task. Your input is quoted safely, and you can share the filled-in form as a link.
-- **[From bash](https://tmhsdigital.github.io/Powershell-for-Dummies/from-bash/) / [From cmd](https://tmhsdigital.github.io/Powershell-for-Dummies/from-cmd/)**: know `grep`, `ls -la`, or `ipconfig`? Find the PowerShell way, plus the gotchas.
-- **[Explain a command](https://tmhsdigital.github.io/Powershell-for-Dummies/explain/)**: paste a line from a forum or an AI chat and see each step in plain English, with warnings for anything that deletes, downloads and runs code, or turns off protection. Nothing is executed.
-- **[Guides](https://tmhsdigital.github.io/Powershell-for-Dummies/guides/)**: a short reading path from "what is PowerShell?" to pipelines, objects, variables, and your profile.
-- **[Printable cheat sheet](https://tmhsdigital.github.io/Powershell-for-Dummies/cheat-sheet/)**: every command on two sides of paper.
+- **[Commands](https://tmhsdigital.github.io/copy-paste-powershell/commands/)**: 70+ everyday cmdlets, each with a one-click copyable one-liner, a plain-English explanation, which OS and PowerShell version it works on, whether it needs admin, and what the output looks like.
+- **[Scripts](https://tmhsdigital.github.io/copy-paste-powershell/scripts/)**: ready-to-run `.ps1` files (backups, cleanup, bulk rename, inventories, host checks). Every script that changes something previews first and supports `-WhatIf`.
+- **[Builders](https://tmhsdigital.github.io/copy-paste-powershell/builders/)**: fill in a short form and get a working command or script: copy, rename, find and replace, zip, delete old files, schedule a task. Your input is quoted safely, and you can share the filled-in form as a link.
+- **[From bash](https://tmhsdigital.github.io/copy-paste-powershell/from-bash/) / [From cmd](https://tmhsdigital.github.io/copy-paste-powershell/from-cmd/)**: know `grep`, `ls -la`, or `ipconfig`? Find the PowerShell way, plus the gotchas.
+- **[Explain a command](https://tmhsdigital.github.io/copy-paste-powershell/explain/)**: paste a line from a forum or an AI chat and see each step in plain English, with warnings for anything that deletes, downloads and runs code, or turns off protection. Nothing is executed.
+- **[Guides](https://tmhsdigital.github.io/copy-paste-powershell/guides/)**: a short reading path from "what is PowerShell?" to pipelines, objects, variables, and your profile.
+- **[Printable cheat sheet](https://tmhsdigital.github.io/copy-paste-powershell/cheat-sheet/)**: every command on two sides of paper.
 
 ## Who it's for
 
@@ -52,8 +52,8 @@ Pushing a `v*.*.*` tag runs `.github/workflows/release-module.yml`, which tests 
 
 Found a mistake or want a command added? Every page has **Edit this page on GitHub** and **Report a problem** links.
 
-- [Request a command](https://github.com/TMHSDigital/Powershell-for-Dummies/issues/new?template=request-command.yml)
-- [Report a wrong or broken snippet](https://github.com/TMHSDigital/Powershell-for-Dummies/issues/new?template=broken-snippet.yml)
+- [Request a command](https://github.com/TMHSDigital/copy-paste-powershell/issues/new?template=request-command.yml)
+- [Report a wrong or broken snippet](https://github.com/TMHSDigital/copy-paste-powershell/issues/new?template=broken-snippet.yml)
 - Adding a page is just adding a markdown file. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Run it locally

@@ -393,7 +393,10 @@ main {
 .hero-title span {
   display: block;
   color: var(--text);
-  background: linear-gradient(transparent 62%, var(--amber) 62%, var(--amber) 92%, transparent 92%);
+  background: var(--amber);
+  padding: 0.04em 0.12em 0.08em;
+  margin-left: -0.12em;
+  margin-bottom: 0.08em;
   width: fit-content;
 }
 

@@ -10,13 +10,13 @@
   "scripts": {
     "start": "eleventy --serve",
     "build": "eleventy",
-    "build:gh": "eleventy --pathprefix=/Powershell-for-Dummies/",
+    "build:gh": "eleventy --pathprefix=/copy-paste-powershell/",
     "validate": "node tools/validate-content.mjs",
     "hygiene": "node tools/hygiene-check.mjs",
     "test": "node --test \"tests/**/*.test.mjs\"",
-    "check-links": "node tools/check-links.mjs --prefix Powershell-for-Dummies",
+    "check-links": "node tools/check-links.mjs --prefix copy-paste-powershell",
     "test:ps": "pwsh -NoProfile -File tests/run.ps1 -Lint",
-    "a11y": "node tools/a11y.mjs --prefix Powershell-for-Dummies"
+    "a11y": "node tools/a11y.mjs --prefix copy-paste-powershell"
   },
   "dependencies": {
     "@11ty/eleventy": "^3.1.2",

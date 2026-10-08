@@ -12,7 +12,7 @@ body:
     attributes:
       label: Page
       description: The "Report a problem" link fills this in for you.
-      placeholder: https://tmhsdigital.github.io/Powershell-for-Dummies/commands/get-childitem/
+      placeholder: https://tmhsdigital.github.io/copy-paste-powershell/commands/get-childitem/
     validations:
       required: true
   - type: textarea

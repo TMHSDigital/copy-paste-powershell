@@ -25,9 +25,9 @@
     PrivateData          = @{
         PSData = @{
             Tags         = @('beginner', 'cheatsheet', 'backup', 'cleanup', 'rename', 'inventory', 'Windows', 'Linux', 'MacOS')
-            LicenseUri   = 'https://github.com/TMHSDigital/Powershell-for-Dummies/blob/main/LICENSE'
-            ProjectUri   = 'https://tmhsdigital.github.io/Powershell-for-Dummies/'
-            ReleaseNotes = 'https://github.com/TMHSDigital/Powershell-for-Dummies/releases'
+            LicenseUri   = 'https://github.com/TMHSDigital/copy-paste-powershell/blob/main/LICENSE'
+            ProjectUri   = 'https://tmhsdigital.github.io/copy-paste-powershell/'
+            ReleaseNotes = 'https://github.com/TMHSDigital/copy-paste-powershell/releases'
         }
     }
 }
