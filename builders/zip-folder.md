@@ -36,4 +36,4 @@ template: |
 
 Creates the destination folder if it is missing, then writes one `.zip` that contains the folder. The last line prints where the zip went.
 
-`Compress-Archive` cannot zip files larger than 2 GB on Windows PowerShell 5.1. For big folders, use PowerShell 7.
+`Compress-Archive` cannot add files larger than 2 GB, in Windows PowerShell 5.1 and PowerShell 7 alike, and it skips hidden files. For folders with big files, use `tar.exe -a -c -f .\archive.zip .\folder`, which is built into Windows 10 and 11.

@@ -31,7 +31,14 @@ The effective policy is the first one in this order that is not `Undefined`:
 | Bypass | Do not block. Use for one process, not as a lifestyle. |
 | Unrestricted | Runs everything, warns on downloaded files. |
 
-On many Windows 10/11 machines, CurrentUser is already `RemoteSigned`. That is a reasonable default.
+What you start with depends on which PowerShell you open:
+
+- **Windows PowerShell 5.1** (`powershell.exe`) on Windows 10 and 11 starts at `Restricted`, so no scripts run until you change it.
+- **PowerShell 7** (`pwsh.exe`) installs with `RemoteSigned` for the whole machine.
+
+The two keep **separate settings**. Changing the policy in one does not change it in the other, which is the usual reason for "I changed it and it still fails." Run the command below in the PowerShell you actually use.
+
+`RemoteSigned` for CurrentUser is a reasonable choice for most people.
 
 ## Change it (CurrentUser only)
 

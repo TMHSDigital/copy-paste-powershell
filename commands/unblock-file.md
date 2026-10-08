@@ -8,7 +8,9 @@ topics: [scripts, security, download]
 command: Unblock-File -Path .\script.ps1
 summary: Remove the "downloaded from the internet" mark so a script you trust can run.
 module: Microsoft.PowerShell.Utility
-platforms: [windows]
+platforms: [windows, macos]
+notes:
+  "7": Also works on macOS, where it removes the quarantine mark from downloaded files. Not available on Linux.
 ---
 
 When you download a file, Windows tags it as coming from the internet. Under the usual `RemoteSigned` execution policy, PowerShell refuses to run a tagged `.ps1` and says it "is not digitally signed."

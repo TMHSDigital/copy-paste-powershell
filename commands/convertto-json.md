@@ -17,7 +17,7 @@ notes:
   all: Only 2 levels of nesting are kept by default. Add -Depth 10 for deeper data. PowerShell 7.1+ warns when it cuts something off.
 ---
 
-Makes JSON. `-Depth 5` (or higher) is often required. The default depth in Windows PowerShell 5.1 is 2, which silently truncates nested objects.
+Makes JSON. For nested data, add `-Depth 5` (or higher). Without it, anything deeper than 2 levels is cut off and shown as type names. Windows PowerShell 5.1 does this silently.
 
 ## Try this
 

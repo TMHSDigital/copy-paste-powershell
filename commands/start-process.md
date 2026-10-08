@@ -5,7 +5,7 @@ aliases: [start, saps]
 category: system
 difficulty: beginner
 topics: [system, process, open]
-command: Start-Process -FilePath notepad.exe -ArgumentList .\notes.txt
+command: Start-Process -FilePath .\notes.txt
 summary: Launch a program, or open a file or web address with its default app.
 module: Microsoft.PowerShell.Management
 platforms: [windows, linux, macos]
@@ -28,6 +28,7 @@ Starts a program in its own window. Point it at a document or a URL and it opens
 ## Try this
 
 ```powershell
+Start-Process -FilePath notepad.exe -ArgumentList .\notes.txt
 Start-Process -FilePath .\report.pdf
 Start-Process -FilePath 'https://learn.microsoft.com/powershell/'
 Start-Process -FilePath powershell.exe -Verb RunAs

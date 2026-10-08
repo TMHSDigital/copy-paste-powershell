@@ -26,6 +26,13 @@ Downloads a response. `.Content` is the body. `.StatusCode` is the status. On Wi
 
 For JSON APIs, `Invoke-RestMethod` is usually nicer.
 
+Downloads crawling along in Windows PowerShell 5.1? The progress bar is the cause. Turn it off for the session first:
+
+```powershell
+$ProgressPreference = 'SilentlyContinue'
+Invoke-WebRequest -Uri 'https://example.com/file.zip' -OutFile .\file.zip -UseBasicParsing
+```
+
 ## Try this
 
 ```powershell

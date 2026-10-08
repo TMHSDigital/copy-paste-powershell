@@ -25,4 +25,4 @@ Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object Manufacturer, Mo
 Get-CimInstance -ClassName Win32_QuickFixEngineering | Sort-Object InstalledOn -Descending | Select-Object -First 5
 ```
 
-`LastBootUpTime` from the first example tells you how long since the last restart.
+`LastBootUpTime` from the command at the top tells you when the computer last restarted.

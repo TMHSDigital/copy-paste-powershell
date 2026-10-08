@@ -28,4 +28,4 @@ Get-Command -Module ImportExcel
 
 Update later with `Update-Module -Name ImportExcel`. Remove it with `Uninstall-Module -Name ImportExcel`.
 
-PowerShell 7.4+ also ships the newer `Install-PSResource`, which works the same way.
+PowerShell 7.4+ also ships the newer `Install-PSResource` (module `Microsoft.PowerShell.PSResourceGet`). It does the same job, but some parameters differ: for example, `-TrustRepository` replaces answering the "untrusted repository" prompt, and `-Reinstall` replaces `-Force`.

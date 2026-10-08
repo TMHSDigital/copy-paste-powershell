@@ -12,7 +12,7 @@ platforms: [windows]
 equivalents:
   cmd: net user
 notes:
-  "7": Loads through Windows PowerShell compatibility. If it errors, run it in Windows PowerShell 5.1.
+  "7": Works natively on Windows 10 version 1809 and later. Not available in 32-bit PowerShell on 64-bit Windows; use the normal 64-bit PowerShell window.
 ---
 
 Lists accounts stored on this computer only. Domain and Microsoft-account sign-ins appear here only if they also have a local account.
