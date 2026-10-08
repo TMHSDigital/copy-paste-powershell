@@ -125,3 +125,12 @@ test("copy builder: Move never gets -Recurse", () => {
   const copy = R.render(data, { action: "Copy-Item", source: "a", destination: "b", recurse: true });
   assert.match(copy.script, /-Recurse/);
 });
+
+test("schedule builder unblocks the script, hides the window, and catches up missed runs", () => {
+  const { data } = readFrontmatter("builders/scheduled-task.md");
+  const { script } = R.render(data, { taskName: "t", script: "C:\\Scripts\\a.ps1", time: "09:00" });
+  assert.match(script, /^Unblock-File -LiteralPath \$script$/m);
+  assert.match(script, /-WindowStyle Hidden/);
+  assert.match(script, /New-ScheduledTaskSettingsSet -StartWhenAvailable/);
+  assert.match(script, /Register-ScheduledTask .* -Settings \$settings/);
+});
