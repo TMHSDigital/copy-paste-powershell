@@ -306,11 +306,27 @@
       riskList.append(el("li", { className: "risk-info", textContent: "Nothing on our list of risky patterns. That is not a guarantee; read each step." }));
     }
     risksWrap.hidden = false;
+    announceSummary(segments.length, risks.filter((r) => r.level !== "info").length);
+  }
+
+  // Screen readers get one short summary once typing pauses, not the whole
+  // output on every keystroke. The details are in the page to read.
+  let announceTimer = null;
+  function announceSummary(steps, warnings) {
+    window.clearTimeout(announceTimer);
+    announceTimer = window.setTimeout(() => {
+      const status = document.getElementById("site-status");
+      if (status) {
+        const warned = warnings ? `${warnings} warning${warnings === 1 ? "" : "s"} under Before you run it.` : "No warnings.";
+        status.textContent = `${steps} step${steps === 1 ? "" : "s"}. ${warned}`;
+      }
+    }, 1000);
   }
 
   let timer = null;
   input.addEventListener("input", () => {
     window.clearTimeout(timer);
+    window.clearTimeout(announceTimer);
     timer = window.setTimeout(update, 150);
   });
 

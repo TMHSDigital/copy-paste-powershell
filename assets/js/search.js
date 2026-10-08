@@ -236,6 +236,19 @@
       }
     });
 
+    // Tabbing away from both the box and the results closes them, so the
+    // overlay never covers the page the keyboard moved to. Only when focus
+    // lands somewhere else: Safari does not focus links on click, and the
+    // click handler above covers mouse use.
+    for (const el of [input, panel]) {
+      el.addEventListener("focusout", (event) => {
+        const next = event.relatedTarget;
+        if (next && next !== input && !panel.contains(next)) {
+          close();
+        }
+      });
+    }
+
     return { input, update };
   }
 

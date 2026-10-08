@@ -19,12 +19,12 @@ layout: base.njk
         <div class="field">
           {% if field.type == "checkbox" %}
             <label class="check-label">
-              <input type="checkbox" name="{{ field.name }}" {% if field.default %}checked{% endif %}>
+              <input type="checkbox" name="{{ field.name }}" {% if field.default %}checked{% endif %} aria-describedby="error-{{ field.name }}{% if field.help %} help-{{ field.name }}{% endif %}">
               {{ field.label }}
             </label>
           {% elif field.type == "select" %}
             <label for="field-{{ field.name }}">{{ field.label }}</label>
-            <select id="field-{{ field.name }}" name="{{ field.name }}">
+            <select id="field-{{ field.name }}" name="{{ field.name }}" aria-describedby="error-{{ field.name }}{% if field.help %} help-{{ field.name }}{% endif %}">
               {% for option in field.options %}
                 <option value="{{ option.value }}" {% if option.value == field.default %}selected{% endif %}>{{ option.label }}</option>
               {% endfor %}
@@ -46,7 +46,9 @@ layout: base.njk
           {% if field.help %}
             <p class="field-help" id="help-{{ field.name }}">{{ field.help }}</p>
           {% endif %}
-          <p class="field-error" id="error-{{ field.name }}" role="alert" hidden></p>
+          {#- Not role="alert": it would interrupt on every keystroke. The field
+              gets aria-invalid, and its error is read through aria-describedby. #}
+          <p class="field-error" id="error-{{ field.name }}" hidden></p>
         </div>
       {% endfor %}
     </form>

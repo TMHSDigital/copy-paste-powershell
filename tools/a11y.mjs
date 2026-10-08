@@ -89,6 +89,7 @@ try {
     await Promise.all(Array.from({ length: 4 }, worker));
     await context.close();
   }
+  await checkKeyboard();
 } finally {
   await browser.close();
   server.close();
@@ -99,6 +100,25 @@ if (failures) {
   process.exit(1);
 }
 console.log(`\nAccessibility check passed (${PAGES.length} pages, light and dark).`);
+
+// Keyboard behaviour axe cannot see.
+async function checkKeyboard() {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await page.goto(`${origin}${prefix}`, { waitUntil: "networkidle" });
+  const search = page.locator("header input[type=search]").first();
+  await search.fill("zip");
+  const panel = page.locator(".search-results").first();
+  await panel.waitFor({ state: "visible" });
+  await search.focus();
+  await page.keyboard.press("Shift+Tab");
+  const closed = await panel.isHidden();
+  console.log(`${closed ? "ok  " : "FAIL"} keyboard: search results close when focus leaves`);
+  if (!closed) {
+    failures++;
+  }
+  await context.close();
+}
 
 async function checkPage(page, colorScheme, p) {
   await page.goto(`${origin}${prefix}${p}`, { waitUntil: "networkidle" });
