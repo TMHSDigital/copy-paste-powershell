@@ -127,6 +127,27 @@ Describe 'copy-files builder' {
     }
 }
 
+Describe 'zip-folder builder' {
+    BeforeEach {
+        $box = New-Sandbox
+        $src = Join-Path $box 'src'
+        [System.IO.Directory]::CreateDirectory($src) | Out-Null
+        Set-Content -LiteralPath (Join-Path $src 'a.txt') -Value 'a'
+    }
+
+    It 'writes the zip into a destination with brackets' {
+        $zip = Invoke-BuilderScript 'zip-folder' @{ source = $src; destination = (Join-Path $box 'out [2]'); name = 'docs' }
+        Test-Path -LiteralPath "$zip" | Should -BeTrue
+        "$zip" | Should -Match 'docs-\d{8}-\d{4}\.zip$'
+    }
+
+    It 'creates nothing in preview mode' {
+        $out = Invoke-BuilderScript 'zip-folder' @{ source = $src; destination = (Join-Path $box 'out'); name = 'docs'; whatIf = $true }
+        "$out" | Should -Match 'Would write .*docs-.*.zip with 1 file'
+        Test-Literal $box 'out' | Should -BeFalse
+    }
+}
+
 Describe 'remove-old-files builder' {
     It 'deletes only names that really match the filter' {
         $box = New-Sandbox

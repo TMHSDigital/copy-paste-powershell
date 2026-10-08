@@ -34,6 +34,6 @@ $rows = foreach ($key in $keys) {
 $unique = $rows | Sort-Object DisplayName, DisplayVersion -Unique
 
 if ($PSCmdlet.ShouldProcess($OutputPath, 'Write installed programs CSV')) {
-    $unique | Export-Csv -Path $OutputPath -NoTypeInformation -Encoding $csvEncoding
+    $unique | Export-Csv -LiteralPath $OutputPath -NoTypeInformation -Encoding $csvEncoding
     Write-Output $OutputPath
 }

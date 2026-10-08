@@ -20,16 +20,18 @@ fields:
     default: "docs"
     explain: "The file is named like {value}-20260107-0930.zip, so older zips are never overwritten."
   - name: whatIf
-    label: Preview only (-WhatIf)
+    label: Preview only (writes nothing)
     type: checkbox
     default: false
-    explain: "-WhatIf prints what would be zipped without writing the file."
+    explain: "Preview mode prints where the zip would go and how many files it would hold. Nothing is created."
 template: |
   $stamp = Get-Date -Format 'yyyyMMdd-HHmm'
-  New-Item -ItemType Directory -Force -Path {{destination:q}} | Out-Null
   $zip = Join-Path -Path {{destination:q}} -ChildPath ({{name:q}} + '-' + $stamp + '.zip')
-  Compress-Archive -LiteralPath {{source:q}} -DestinationPath $zip{{#whatIf}} -WhatIf{{/whatIf}}
-  $zip
+  {{#whatIf}}# Preview only: nothing is created. Untick "Preview only" to write the zip.
+  'Would write {0} with {1} file(s).' -f $zip, @(Get-ChildItem -LiteralPath {{source:q}} -Recurse -File).Count{{/whatIf}}{{^whatIf}}New-Item -ItemType Directory -Force -Path {{destination:q}} | Out-Null
+  # -DestinationPath reads [ ] as wildcards, so escape them.
+  Compress-Archive -LiteralPath {{source:q}} -DestinationPath ([WildcardPattern]::Escape($zip))
+  $zip{{/whatIf}}
 ---
 
 Creates the destination folder if it is missing, then writes one `.zip` that contains the folder. The last line prints where the zip went.

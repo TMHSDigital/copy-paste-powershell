@@ -198,6 +198,13 @@ Describe 'folder-inventory.ps1' {
         & (Get-ScriptPath 'folder-inventory') -Path $box -OutputPath "$box\files.csv" -WhatIf
         "$box\files.csv" | Should -Not -Exist
     }
+
+    It 'writes to a path with brackets in it' {
+        $box = New-Sandbox
+        $out = Join-Path $box 'files [1].csv'
+        & (Get-ScriptPath 'folder-inventory') -Path $box -OutputPath $out | Out-Null
+        Test-Path -LiteralPath $out | Should -BeTrue
+    }
 }
 
 Describe 'find-large-files.ps1' {
@@ -211,6 +218,26 @@ Describe 'find-large-files.ps1' {
 }
 
 Describe 'start-logged-transcript.ps1' {
+    It 'starts a transcript in a folder with brackets, creating it' {
+        $box = New-Sandbox
+        $logs = Join-Path $box 'logs [1]'
+        $log = & (Get-ScriptPath 'start-logged-transcript') -LogDirectory $logs | Select-Object -Last 1
+        try {
+            'hello from the test'
+        } finally {
+            Stop-Transcript | Out-Null
+        }
+        Test-Path -LiteralPath $log | Should -BeTrue
+        Split-Path -Parent $log | Should -Be $logs
+    }
+
+    It 'defaults to the temp folder' {
+        $log = & (Get-ScriptPath 'start-logged-transcript') | Select-Object -Last 1
+        Stop-Transcript | Out-Null
+        Split-Path -Parent $log | Should -Be ([System.IO.Path]::GetTempPath().TrimEnd('\', '/'))
+        Remove-Item -LiteralPath $log
+    }
+
     It 'explains instead of throwing when no transcript is running' {
         $warnings = & (Get-ScriptPath 'start-logged-transcript') -Stop 3>&1
         "$warnings" | Should -Match 'No transcript is running'

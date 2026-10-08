@@ -7,7 +7,7 @@ parameters:
   - name: LogDirectory
     type: string
     required: false
-    description: Folder for the log. Default is the TEMP folder.
+    description: Folder for the log. Default is your temp folder, on Windows, macOS, and Linux.
   - name: Stop
     type: switch
     required: false

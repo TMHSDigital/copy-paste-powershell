@@ -37,6 +37,6 @@ if ($scanErrors.Count -gt 0) {
 }
 
 if ($PSCmdlet.ShouldProcess($OutputPath, 'Write CSV inventory')) {
-    $rows | Export-Csv -Path $OutputPath -NoTypeInformation -Encoding $csvEncoding
+    $rows | Export-Csv -LiteralPath $OutputPath -NoTypeInformation -Encoding $csvEncoding
     Write-Output $OutputPath
 }

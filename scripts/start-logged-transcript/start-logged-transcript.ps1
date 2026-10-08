@@ -3,7 +3,7 @@
     Start or stop a transcript in a chosen folder.
 
 .PARAMETER LogDirectory
-    Folder for the log file. Default: TEMP.
+    Folder for the log file. Default: your temp folder (works on Windows, macOS, and Linux).
 
 .PARAMETER Stop
     Stop the current transcript.
@@ -13,7 +13,7 @@
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(
-    [string]$LogDirectory = $env:TEMP,
+    [string]$LogDirectory = [System.IO.Path]::GetTempPath(),
 
     [switch]$Stop
 )
@@ -40,6 +40,6 @@ if (-not (Test-Path -LiteralPath $LogDirectory -PathType Container)) {
 $log = Join-Path -Path $LogDirectory -ChildPath ("transcript-{0}.txt" -f (Get-Date -Format 'yyyyMMdd-HHmmss'))
 
 if ($PSCmdlet.ShouldProcess($log, 'Start-Transcript')) {
-    Start-Transcript -Path $log
+    Start-Transcript -LiteralPath $log
     Write-Output $log
 }
