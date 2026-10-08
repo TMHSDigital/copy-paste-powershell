@@ -3,13 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  {#- GitHub Pages cannot send headers, so the policy lives here. Everything
+      is served from this site; GoatCounter is the only outside host. Keep
+      JavaScript in assets/js: inline handlers like onclick are blocked. #}
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://gc.zgo.at; style-src 'self'; img-src 'self' data: https://*.goatcounter.com; connect-src 'self' https://*.goatcounter.com; object-src 'none'; base-uri 'none'; form-action 'self'">
   {%- set pageTitle = title -%}
   {%- if cmdlet and title %}{% set pageTitle = title + " (" + cmdlet + ")" %}{% endif -%}
   {%- set fullTitle = (pageTitle + " | " + site.title) if (pageTitle and pageTitle != site.title) else (site.title + ": " + site.tagline) -%}
   {%- set metaDescription = description or summary or site.description -%}
   <title>{{ fullTitle }}</title>
   <meta name="description" content="{{ metaDescription }}">
+  {%- if noindex %}
+  <meta name="robots" content="noindex">
+  {%- else %}
   <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+  {%- endif %}
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#012456">
   <meta property="og:type" content="{% if cmdlet %}article{% else %}website{% endif %}">
@@ -45,8 +53,6 @@
   <div id="site-status" class="visually-hidden" role="status" aria-live="polite"></div>
   <script src="/assets/js/copy.js" defer></script>
   <script src="/assets/js/search.js" defer></script>
-  <script src="/assets/js/builder-render.js" defer></script>
-  <script src="/assets/js/builder.js" defer></script>
   {%- for script in extraScripts %}
   <script src="{{ script }}" defer></script>
   {%- endfor %}

@@ -136,4 +136,13 @@
     });
     pre.appendChild(button);
   });
+
+  // Small page behaviours that used to be inline onclick/onsubmit handlers,
+  // which the Content-Security-Policy blocks.
+  document.querySelectorAll("[data-print]").forEach((button) => {
+    button.addEventListener("click", () => window.print());
+  });
+  document.querySelectorAll("form[data-no-submit]").forEach((form) => {
+    form.addEventListener("submit", (event) => event.preventDefault());
+  });
 })();

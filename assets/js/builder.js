@@ -128,7 +128,17 @@
 
   if (download) {
     download.addEventListener("click", () => {
-      if (Object.keys(lastErrors).length) {
+      const firstError = Object.keys(lastErrors)[0];
+      if (firstError) {
+        // Say why nothing downloaded, and take the visitor to the field.
+        const field = form.elements.namedItem(firstError);
+        if (field && field.focus) {
+          field.focus();
+        }
+        const status = document.getElementById("site-status");
+        if (status) {
+          status.textContent = `Fix the form first: ${lastErrors[firstError]}`;
+        }
         return;
       }
       const blob = new Blob([preview.textContent], { type: "text/plain" });
@@ -139,7 +149,8 @@
       document.body.appendChild(a);
       a.click();
       a.remove();
-      URL.revokeObjectURL(url);
+      // Revoking in the same tick can cancel the download in some browsers.
+      window.setTimeout(() => URL.revokeObjectURL(url), 0);
       if (window.siteTrack) {
         window.siteTrack("builder-download", spec.filename);
       }

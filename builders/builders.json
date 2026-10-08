@@ -1,4 +1,5 @@
 {
   "layout": "builder.njk",
-  "permalink": "/builders/{{ page.fileSlug }}/"
+  "permalink": "/builders/{{ page.fileSlug }}/",
+  "extraScripts": ["/assets/js/builder-render.js", "/assets/js/builder.js"]
 }

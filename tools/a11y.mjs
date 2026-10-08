@@ -82,6 +82,18 @@ try {
     const queue = [...PAGES];
     const worker = async () => {
       const page = await context.newPage();
+      // A script error or something the Content-Security-Policy blocks
+      // fails the run too, since axe would not notice a dead page.
+      page.on("pageerror", (error) => {
+        failures++;
+        console.error(`FAIL ${colorScheme.padEnd(5)} ${page.url()}\n  script error: ${error.message}`);
+      });
+      page.on("console", (message) => {
+        if (message.type() === "error" && /Content.Security.Policy/i.test(message.text())) {
+          failures++;
+          console.error(`FAIL ${colorScheme.padEnd(5)} ${page.url()}\n  ${message.text()}`);
+        }
+      });
       for (let p = queue.shift(); p !== undefined; p = queue.shift()) {
         await checkPage(page, colorScheme, p);
       }
