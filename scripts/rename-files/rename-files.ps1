@@ -55,13 +55,24 @@ if ([string]::IsNullOrWhiteSpace($Prefix) -and [string]::IsNullOrWhiteSpace($Suf
 }
 
 $comparison = [System.StringComparison]::OrdinalIgnoreCase
-$items = @(Get-ChildItem -LiteralPath $Path -File -Filter $Filter -Recurse:$Recurse)
+# On Windows PowerShell 5.1, -Filter also matches 8.3 short names, so check
+# the real name too. Brackets in -Filter are literal, so escape them for -like.
+$namePattern = $Filter -replace '([\[\]])', '`$1'
+$items = @(
+    Get-ChildItem -LiteralPath $Path -File -Filter $Filter -Recurse:$Recurse |
+        Where-Object { $_.Name -like $namePattern }
+)
 $targets = @{}
 
 $plan = foreach ($item in $items) {
     $hasPrefix = $Prefix -eq '' -or $item.BaseName.StartsWith($Prefix, $comparison)
     $hasSuffix = $Suffix -eq '' -or $item.BaseName.EndsWith($Suffix, $comparison)
-    $newName = '{0}{1}{2}{3}' -f $Prefix, $item.BaseName, $Suffix, $item.Extension
+    # Add only the parts that are missing, so a half-renamed file is not
+    # given the prefix twice.
+    $newBase = $item.BaseName
+    if (-not $hasPrefix) { $newBase = $Prefix + $newBase }
+    if (-not $hasSuffix) { $newBase = $newBase + $Suffix }
+    $newName = $newBase + $item.Extension
     $target = Join-Path -Path $item.DirectoryName -ChildPath $newName
 
     $status = if ($hasPrefix -and $hasSuffix) {

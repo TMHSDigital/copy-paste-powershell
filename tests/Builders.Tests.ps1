@@ -40,6 +40,33 @@ BeforeAll {
     }
 }
 
+Describe 'rename-prefix builder' {
+    BeforeEach {
+        $box = New-Sandbox
+        'a', 'x-b', 'c-v2', 'x-d-v2' | ForEach-Object { Set-Content -LiteralPath (Join-Path $box "$_.txt") -Value $_ }
+    }
+
+    It 'adds only the missing part and leaves finished files alone' {
+        $out = Invoke-BuilderScript 'rename-prefix' @{ path = $box; filter = '*.txt'; prefix = 'x-'; suffix = '-v2'; whatIf = $false }
+        (Get-ChildItem -LiteralPath $box).Name | Sort-Object | Should -Be @('x-a-v2.txt', 'x-b-v2.txt', 'x-c-v2.txt', 'x-d-v2.txt')
+        "$out" | Should -Match 'Skipped .*x-d-v2\.txt'
+    }
+
+    It 'is a no-op the second time' {
+        $values = @{ path = $box; filter = '*.txt'; prefix = 'x-'; suffix = '-v2'; whatIf = $false }
+        Invoke-BuilderScript 'rename-prefix' $values | Out-Null
+        Invoke-BuilderScript 'rename-prefix' $values | Out-Null
+        (Get-ChildItem -LiteralPath $box).Name | Sort-Object | Should -Be @('x-a-v2.txt', 'x-b-v2.txt', 'x-c-v2.txt', 'x-d-v2.txt')
+    }
+
+    It 'ignores case when checking for the prefix' {
+        Set-Content -LiteralPath (Join-Path $box 'X-e.txt') -Value 'e'
+        Invoke-BuilderScript 'rename-prefix' @{ path = $box; filter = 'X-e.txt'; prefix = 'x-'; whatIf = $false } | Out-Null
+        Test-Literal $box 'X-e.txt' | Should -BeTrue
+        Test-Literal $box 'x-X-e.txt' | Should -BeFalse
+    }
+}
+
 Describe 'remove-old-files builder' {
     It 'deletes only names that really match the filter' {
         $box = New-Sandbox

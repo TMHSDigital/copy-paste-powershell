@@ -101,6 +101,18 @@ Describe 'rename-files.ps1' {
         & (Get-ScriptPath 'rename-files') -Path $box -Prefix 'x-' -Filter *.md -Apply -WhatIf | Out-Null
         (Get-ChildItem $box).Name | Sort-Object | Should -Be @('a.md', 'b.md', 'x-a.md')
     }
+
+    It 'adds only the missing part when a file already has the prefix' {
+        $plan = & (Get-ScriptPath 'rename-files') -Path $box -Prefix 'x-' -Suffix '-v2' -Filter *.md 3>$null
+        ($plan | Where-Object FullName -eq (Join-Path $box 'x-a.md')).NewName | Should -Be 'x-a-v2.md'
+        ($plan | Where-Object FullName -eq (Join-Path $box 'b.md')).NewName | Should -Be 'x-b-v2.md'
+    }
+
+    It 'matches the real name, not the 8.3 short name' {
+        Set-Content -LiteralPath "$box\page.html" -Value 'x'
+        $plan = & (Get-ScriptPath 'rename-files') -Path $box -Prefix 'x-' -Filter *.htm 3>$null
+        @($plan).Count | Should -Be 0
+    }
 }
 
 Describe 'remove-old-files.ps1' {
