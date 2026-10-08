@@ -26,7 +26,8 @@ fields:
       - { value: length, label: Print name and size, explain: "$_.Length is the size in bytes. '{0}  {1}' -f fills in the blanks in order." }
       - { value: lastwrite, label: Print name and last write time, explain: "$_.LastWriteTime is when the file was last saved." }
 template: |
-  Get-ChildItem -LiteralPath {{path:q}} -File{{#filter}} -Filter {{filter:q}}{{/filter}}{{#recurse}} -Recurse{{/recurse}} | ForEach-Object {
+  Get-ChildItem -LiteralPath {{path:q}} -File{{#filter}} -Filter {{filter:q}}{{/filter}}{{#recurse}} -Recurse{{/recurse}}{{#filter}} |
+      Where-Object Name -like {{filter:q}}{{/filter}} | ForEach-Object {
   {{#action_name}}    $_.Name{{/action_name}}{{#action_length}}    '{0}  {1}' -f $_.Name, $_.Length{{/action_length}}{{#action_lastwrite}}    '{0}  {1}' -f $_.Name, $_.LastWriteTime{{/action_lastwrite}}
   }
 ---

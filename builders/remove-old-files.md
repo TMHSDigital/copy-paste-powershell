@@ -32,8 +32,9 @@ fields:
     explainOff: "This deletes files for real. There is no recycle bin."
 template: |
   $cutoff = (Get-Date).AddDays(-{{days}})
+  # -like double-checks the name: in Windows PowerShell 5.1, -Filter *.htm also matches .html files.
   Get-ChildItem -LiteralPath {{path:q}} -File{{#filter}} -Filter {{filter:q}}{{/filter}}{{#recurse}} -Recurse{{/recurse}} |
-      Where-Object { $_.LastWriteTime -lt $cutoff } |
+      Where-Object { $_.LastWriteTime -lt $cutoff{{#filter}} -and $_.Name -like {{filter:q}}{{/filter}} } |
       Remove-Item{{#whatIf}} -WhatIf{{/whatIf}}
 ---
 

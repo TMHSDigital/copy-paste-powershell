@@ -17,6 +17,9 @@
 .PARAMETER Recurse
     Include subfolders.
 
+.PARAMETER Force
+    Also delete read-only files.
+
 .PARAMETER Apply
     Perform deletes.
 
@@ -36,6 +39,8 @@ param(
 
     [switch]$Recurse,
 
+    [switch]$Force,
+
     [switch]$Apply
 )
 
@@ -46,9 +51,13 @@ if (-not (Test-Path -LiteralPath $Path -PathType Container)) {
 }
 
 $cutoff = (Get-Date).AddDays(-1 * $OlderThanDays)
+# On Windows PowerShell 5.1, -Filter also matches 8.3 short names, so '*.htm'
+# finds 'page.html'. Check the real name too. Brackets in -Filter are literal,
+# so escape them for -like.
+$namePattern = $Filter -replace '([\[\]])', '`$1'
 $candidates = @(
     Get-ChildItem -LiteralPath $Path -File -Filter $Filter -Recurse:$Recurse -ErrorAction SilentlyContinue -ErrorVariable scanErrors |
-        Where-Object { $_.LastWriteTime -lt $cutoff }
+        Where-Object { $_.Name -like $namePattern -and $_.LastWriteTime -lt $cutoff }
 )
 
 if ($scanErrors.Count -gt 0) {
@@ -61,8 +70,18 @@ if (-not $Apply) {
     return
 }
 
+$removed = 0
+$failed = 0
 foreach ($item in $candidates) {
     if ($PSCmdlet.ShouldProcess($item.FullName, 'Remove-Item')) {
-        Remove-Item -LiteralPath $item.FullName
+        try {
+            Remove-Item -LiteralPath $item.FullName -Force:$Force
+            $removed++
+        } catch {
+            $failed++
+            Write-Warning "Could not delete $($item.FullName): $($_.Exception.Message)"
+        }
     }
 }
+
+Write-Output ("Removed {0}, failed {1}." -f $removed, $failed)

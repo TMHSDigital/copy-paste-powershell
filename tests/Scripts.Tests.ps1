@@ -127,6 +127,46 @@ Describe 'remove-old-files.ps1' {
         & (Get-ScriptPath 'remove-old-files') -Path $box -OlderThanDays 30 -Apply -WhatIf
         "$box\old.log" | Should -Exist
     }
+
+    It 'matches the real name, not the 8.3 short name (*.htm must not match .html)' {
+        'page.html', 'app.logold' | ForEach-Object {
+            Set-Content -LiteralPath "$box\$_" -Value 'x'
+            (Get-Item -LiteralPath "$box\$_").LastWriteTime = (Get-Date).AddDays(-40)
+        }
+        & (Get-ScriptPath 'remove-old-files') -Path $box -OlderThanDays 30 -Filter *.htm -Apply | Out-Null
+        & (Get-ScriptPath 'remove-old-files') -Path $box -OlderThanDays 30 -Filter *.log -Apply | Out-Null
+        "$box\page.html" | Should -Exist
+        "$box\app.logold" | Should -Exist
+        "$box\old.log" | Should -Not -Exist
+    }
+
+    It 'treats brackets in -Filter literally' {
+        Set-Content -LiteralPath "$box\a[1].log" -Value 'x'
+        (Get-Item -LiteralPath "$box\a[1].log").LastWriteTime = (Get-Date).AddDays(-40)
+        & (Get-ScriptPath 'remove-old-files') -Path $box -OlderThanDays 30 -Filter 'a[1].log' -Apply | Out-Null
+        "$box\a[1].log" | Should -Not -Exist
+        "$box\old.log" | Should -Exist
+    }
+
+    It 'keeps going past a file it cannot delete and reports the counts' {
+        'b', 'c' | ForEach-Object {
+            Set-Content -LiteralPath "$box\$_.log" -Value 'x'
+            (Get-Item -LiteralPath "$box\$_.log").LastWriteTime = (Get-Date).AddDays(-40)
+        }
+        (Get-Item -LiteralPath "$box\old.log").IsReadOnly = $true
+        $summary = & (Get-ScriptPath 'remove-old-files') -Path $box -OlderThanDays 30 -Apply 3>$null
+        $summary | Should -Be 'Removed 2, failed 1.'
+        "$box\old.log" | Should -Exist
+        "$box\b.log" | Should -Not -Exist
+        "$box\c.log" | Should -Not -Exist
+    }
+
+    It 'deletes read-only files with -Force' {
+        (Get-Item -LiteralPath "$box\old.log").IsReadOnly = $true
+        $summary = & (Get-ScriptPath 'remove-old-files') -Path $box -OlderThanDays 30 -Apply -Force
+        $summary | Should -Be 'Removed 1, failed 0.'
+        "$box\old.log" | Should -Not -Exist
+    }
 }
 
 Describe 'folder-inventory.ps1' {
