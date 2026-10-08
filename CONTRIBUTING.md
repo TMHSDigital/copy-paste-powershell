@@ -25,7 +25,8 @@ CI runs all of these. Run them before you open a PR.
 | `npm run validate` | Frontmatter is complete; builder templates quote text fields; one `.ps1` per script folder |
 | `npm test` | Builder rendering and escaping (Node) |
 | `npm run build:gh` then `npm run check-links` | Every internal link and asset resolves |
-| `./tests/run.ps1 -Lint` | Pester tests for every script, every snippet on the site parses, PSScriptAnalyzer |
+| `npm run a11y` (after `npm run build:gh`) | axe accessibility check of every page, light and dark. Needs `npx playwright install chromium` once |
+| `./tests/run.ps1 -Lint` | Pester tests for every script, every snippet on the site parses, builder output runs against a test folder, PSScriptAnalyzer |
 
 Install the PowerShell test tools once:
 
@@ -39,7 +40,7 @@ CI runs the PowerShell tests on both Windows PowerShell 5.1 and PowerShell 7. If
 ## Add a command
 
 1. Copy [`commands/_template.md`](commands/_template.md) to `commands/your-cmdlet.md`.
-2. Fill in every required frontmatter field (`title`, `cmdlet`, `aliases`, `category`, `difficulty`, `topics`, `command`, `summary`). Use `topics` for keywords. Do not use Eleventy `tags`.
+2. Fill in every required frontmatter field: `title`, `cmdlet`, `aliases`, `category`, `difficulty`, `topics`, `command`, `summary`, `module` (the module the cmdlet ships in, for example `Microsoft.PowerShell.Management`), and `platforms` (any of `windows`, `linux`, `macos`, as a list like `[windows, linux, macos]`). Use `topics` for keywords. Do not use Eleventy `tags`.
 3. Use placeholder paths only: `.\docs`, `$env:TEMP`, `C:\Path\To\Folder`.
 4. Run `npm run validate`, then `npm start`, and confirm the command appears under `/commands/`.
 

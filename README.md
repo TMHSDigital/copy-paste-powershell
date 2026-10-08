@@ -27,7 +27,12 @@ People who need PowerShell to get something done today: helpdesk and junior sysa
 
 - **Preview first.** Scripts default to a preview or support `-WhatIf`. Destructive commands say so in a yellow box.
 - **No hidden surprises.** Scripts take parameters. No hardcoded paths, machine names, or credentials.
-- **Tested.** CI parses every snippet on the site, runs every script on Windows PowerShell 5.1 and PowerShell 7 with Pester, lints with PSScriptAnalyzer, and checks accessibility and links on every change.
+- **Tested.** On every change, CI does all of the following:
+  - parses every snippet on the site;
+  - runs every script and the builders' output against test folders, on Windows PowerShell 5.1 and PowerShell 7 with Pester;
+  - lints with PSScriptAnalyzer;
+  - checks every internal link;
+  - runs an axe accessibility check on every page, in light and dark mode.
 
 ## PowerShell module (preview)
 
@@ -75,6 +80,7 @@ Then open `http://localhost:8080`.
 | `npm run hygiene` | Fail on local paths and secret-like strings |
 | `npm test` | Builder rendering and escaping tests |
 | `npm run check-links` | Check internal links after `npm run build:gh` |
+| `npm run a11y` | Accessibility check of every page after `npm run build:gh` (run `npx playwright install chromium` once) |
 | `./tests/run.ps1 -Lint` | Pester tests and PSScriptAnalyzer |
 
 ## Layout

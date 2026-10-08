@@ -6,6 +6,7 @@
 
 - [ ] `npm run validate` and `npm run hygiene` pass
 - [ ] `npm test` passes
+- [ ] For page or style changes: `npm run build:gh`, then `npm run check-links` and `npm run a11y` pass
 - [ ] For scripts or snippets: `./tests/run.ps1 -Lint` passes (ideally on both Windows PowerShell 5.1 and PowerShell 7)
 - [ ] Placeholder paths only (`.\docs`, `$env:TEMP`, `C:\Path\To\Folder`). No real user folders, machine names, or secrets
 - [ ] Anything that changes files or system state supports `-WhatIf` or previews first

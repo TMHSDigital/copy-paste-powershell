@@ -13,8 +13,11 @@ updates:
     ignore:
       # js-yaml must stay on the same major version Eleventy uses, so the
       # validation tools parse frontmatter exactly like the site does. The
-      # package.json override also feeds it to gray-matter, which calls
-      # yaml.safeLoad (removed in js-yaml 5). Bump only after Eleventy moves.
+      # package.json override also feeds it to gray-matter, whose default
+      # engine calls yaml.safeLoad, which js-yaml 4 already removed. That only
+      # works because tools/lib/content.mjs passes its own YAML engine; keep
+      # every gray-matter call going through readFrontmatter there.
+      # Bump only after Eleventy moves.
       - dependency-name: js-yaml
         update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions

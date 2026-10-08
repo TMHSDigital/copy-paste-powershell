@@ -1,6 +1,8 @@
-// Runs axe-core against representative built pages in light and dark mode.
+// Runs axe-core against every built page (from sitemap.xml) in light and
+// dark mode, plus a few extra states such as a prefilled Explain page.
 //   npm run build:gh && node tools/a11y.mjs --prefix copy-paste-powershell
-// Fails on serious or critical violations. Needs: npx playwright install chromium
+// Fails on moderate, serious, or critical violations.
+// Needs: npx playwright install chromium
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
@@ -13,23 +15,9 @@ const prefixArg = process.argv.indexOf("--prefix");
 const prefixName = prefixArg > -1 ? String(process.argv[prefixArg + 1] || "").replace(/^\/+|\/+$/g, "") : "";
 const prefix = prefixName ? `/${prefixName}/` : "/";
 
-const PAGES = [
-  "",
-  "commands/",
-  "commands/get-childitem/",
-  "commands/invoke-webrequest/",
-  "scripts/",
-  "scripts/rename-files/",
-  "builders/",
-  "builders/test-host/",
-  "builders/scheduled-task/",
-  "guides/",
-  "guides/pipelines/",
-  "from-bash/",
-  "explain/?cmd=Get-ChildItem%20-Recurse%20%7C%20Remove-Item%20-Force",
-  "cheat-sheet/",
-  "404.html",
-];
+// Pages that are not in the sitemap, or states a plain visit does not show.
+const EXTRA_PAGES = ["explain/?cmd=Get-ChildItem%20-Recurse%20%7C%20Remove-Item%20-Force", "404.html"];
+const FAIL_ON = ["moderate", "serious", "critical"];
 
 const TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -46,6 +34,18 @@ if (!fs.existsSync(site)) {
   console.error("a11y: _site/ does not exist. Run a build first.");
   process.exit(2);
 }
+
+// Every <loc> in the sitemap, as a path relative to the site root.
+const sitemap = fs.readFileSync(path.join(site, "sitemap.xml"), "utf8");
+const PAGES = [
+  ...new Set([
+    ...[...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, loc]) => {
+      const { pathname } = new URL(loc);
+      return pathname.startsWith(prefix) ? pathname.slice(prefix.length) : pathname.replace(/^\//, "");
+    }),
+    ...EXTRA_PAGES,
+  ]),
+];
 
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, "http://localhost");
@@ -78,25 +78,15 @@ let failures = 0;
 try {
   for (const colorScheme of ["light", "dark"]) {
     const context = await browser.newContext({ colorScheme });
-    const page = await context.newPage();
-    for (const p of PAGES) {
-      await page.goto(`${origin}${prefix}${p}`, { waitUntil: "networkidle" });
-      const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
-      const serious = results.violations.filter((v) => v.impact === "serious" || v.impact === "critical");
-      const label = `${colorScheme.padEnd(5)} /${p}`;
-      if (serious.length) {
-        failures += serious.length;
-        console.error(`FAIL ${label}`);
-        for (const v of serious) {
-          console.error(`  [${v.impact}] ${v.id}: ${v.help}`);
-          for (const node of v.nodes.slice(0, 3)) {
-            console.error(`      ${node.target.join(" ")}  ${node.failureSummary.split("\n").slice(1, 2).join(" ").trim()}`);
-          }
-        }
-      } else {
-        console.log(`ok   ${label}`);
+    // A few tabs at once; each takes the next page from the shared queue.
+    const queue = [...PAGES];
+    const worker = async () => {
+      const page = await context.newPage();
+      for (let p = queue.shift(); p !== undefined; p = queue.shift()) {
+        await checkPage(page, colorScheme, p);
       }
-    }
+    };
+    await Promise.all(Array.from({ length: 4 }, worker));
     await context.close();
   }
 } finally {
@@ -105,7 +95,26 @@ try {
 }
 
 if (failures) {
-  console.error(`\nAccessibility check failed: ${failures} serious or critical issue(s).`);
+  console.error(`\nAccessibility check failed: ${failures} issue(s) across ${PAGES.length} pages.`);
   process.exit(1);
 }
-console.log("\nAccessibility check passed.");
+console.log(`\nAccessibility check passed (${PAGES.length} pages, light and dark).`);
+
+async function checkPage(page, colorScheme, p) {
+  await page.goto(`${origin}${prefix}${p}`, { waitUntil: "networkidle" });
+  const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
+  const found = results.violations.filter((v) => FAIL_ON.includes(v.impact));
+  const label = `${colorScheme.padEnd(5)} /${p}`;
+  if (!found.length) {
+    console.log(`ok   ${label}`);
+    return;
+  }
+  failures += found.length;
+  console.error(`FAIL ${label}`);
+  for (const v of found) {
+    console.error(`  [${v.impact}] ${v.id}: ${v.help}`);
+    for (const node of v.nodes.slice(0, 3)) {
+      console.error(`      ${node.target.join(" ")}  ${node.failureSummary.split("\n").slice(1, 2).join(" ").trim()}`);
+    }
+  }
+}
