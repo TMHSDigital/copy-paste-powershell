@@ -46,7 +46,7 @@ node tools/build-module.mjs
 Import-Module .\module\CopyPastePowerShell
 ```
 
-Pushing a `v*.*.*` tag runs `.github/workflows/release-module.yml`, which tests the package and publishes it once a `PSGALLERY_API_KEY` secret is set.
+Pushing a `v*.*.*` tag on `main` runs `.github/workflows/release-module.yml`. It packages the module into `dist/`, tests the package on Windows PowerShell 5.1 and PowerShell 7, and then waits for approval in the `psgallery` environment before publishing. The `PSGALLERY_API_KEY` secret belongs on that environment, so only the publish step can read it. Running the workflow by hand is a dry run that never publishes.
 
 ## Contribute
 

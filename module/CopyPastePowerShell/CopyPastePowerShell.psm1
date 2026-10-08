@@ -49,18 +49,27 @@ function Find-Snippet {
     .PARAMETER Copy
         Put the first match's one-liner on the clipboard.
 
+    .PARAMETER Open
+        Open the first match's page in your web browser.
+
     .EXAMPLE
         Find-Snippet zip
 
     .EXAMPLE
         Find-Snippet grep -Copy
+
+    .EXAMPLE
+        Find-Snippet zip -Open
     #>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory, Position = 0, ValueFromRemainingArguments)]
+        [ValidateNotNullOrEmpty()]
         [string[]]$Query,
 
-        [switch]$Copy
+        [switch]$Copy,
+
+        [switch]$Open
     )
 
     $dataPath = Join-Path -Path $PSScriptRoot -ChildPath 'snippets.json'
@@ -69,6 +78,9 @@ function Find-Snippet {
     }
     $data = [System.IO.File]::ReadAllText($dataPath, [System.Text.Encoding]::UTF8) | ConvertFrom-Json
     $words = @(($Query -join ' ').ToLowerInvariant() -split '\s+' | Where-Object { $_ })
+    if ($words.Count -eq 0) {
+        throw 'Type at least one word to search for, for example: Find-Snippet zip'
+    }
 
     $results = foreach ($item in $data.commands) {
         $haystack = @($item.cmdlet, $item.title, $item.summary) + @($item.aliases) + @($item.topics) + @($item.equivalents) -join ' '
@@ -90,16 +102,20 @@ function Find-Snippet {
         if (@($item.equivalents | ForEach-Object { ($_ -split '\s+')[0] }) -contains $q) { $score += 80 }
         if ($item.title.ToLowerInvariant().Contains($q)) { $score += 30 }
         [pscustomobject]@{
-            PSTypeName = 'CopyPastePowerShell.Snippet'
-            Cmdlet     = $item.cmdlet
-            Title      = $item.title
-            Command    = $item.command
-            Url        = $data.siteUrl + $item.url
-            Score      = $score
+            Score = $score
+            Item  = [pscustomobject]@{
+                PSTypeName = 'CopyPastePowerShell.Snippet'
+                Cmdlet     = $item.cmdlet
+                Title      = $item.title
+                Command    = $item.command
+                Url        = $data.siteUrl + $item.url
+            }
         }
     }
 
-    $sorted = @($results | Sort-Object -Property @{ Expression = 'Score'; Descending = $true }, Cmdlet)
+    $sorted = @($results |
+            Sort-Object -Property @{ Expression = 'Score'; Descending = $true }, @{ Expression = { $_.Item.Cmdlet } } |
+            ForEach-Object { $_.Item })
     if ($sorted.Count -eq 0) {
         Write-Warning "No matches. Request it: $($data.repo)/issues/new?template=request-command.yml"
         return
@@ -108,7 +124,10 @@ function Find-Snippet {
         Set-Clipboard -Value $sorted[0].Command
         Write-Verbose "Copied: $($sorted[0].Command)"
     }
-    $sorted | Select-Object Cmdlet, Title, Command, Url
+    if ($Open) {
+        Start-Process -FilePath $sorted[0].Url
+    }
+    $sorted
 }
 
 Export-ModuleMember -Function (@($scriptMap.Keys) + 'Find-Snippet')

@@ -1,9 +1,12 @@
 name: Release PowerShell module
 
-# Push a tag like v0.1.0 to package module/CopyPastePowerShell, test it, and
-# publish it to the PowerShell Gallery. Publishing only happens when the
-# PSGALLERY_API_KEY repository secret is set; otherwise the job just verifies
-# and uploads the package as a build artifact.
+# Push a tag like v0.1.0 on main to package the module, test the package on
+# Windows PowerShell 5.1 and PowerShell 7, and publish it to the PowerShell
+# Gallery. Publishing waits for approval in the psgallery environment, and only
+# that one step can see the PSGALLERY_API_KEY secret.
+#
+# Run it by hand (Actions > Release PowerShell module > Run workflow) for a dry
+# run: it packages and tests the version you type and never publishes.
 
 on:
   push:
@@ -11,19 +14,20 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Version to package (no publish unless run from a tag)
+        description: Version to package and test (dry run, never published)
         required: true
         default: 0.1.0
 
 permissions:
   contents: read
 
+env:
+  VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.version || github.ref_name }}
+
 jobs:
-  release:
+  package:
+    name: Package
     runs-on: windows-latest
-    env:
-      PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
-      VERSION: ${{ github.ref_type == 'tag' && github.ref_name || inputs.version }}
     defaults:
       run:
         shell: pwsh
@@ -33,21 +37,85 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-      - run: npm ci
+      # Only the build script runs here, so skip dependency install scripts.
+      - run: npm ci --ignore-scripts
       - name: Package module
-        run: node tools/build-module.mjs --package $env:VERSION
-      - name: Install Pester and PSScriptAnalyzer
+        run: node tools/build-module.mjs --package $env:VERSION --out dist
+      - name: Check the package
+        run: |
+          Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
+          $info = Test-ModuleManifest -Path ./dist/CopyPastePowerShell/CopyPastePowerShell.psd1
+          "Packaged $($info.Name) $($info.Version)"
+          $findings = @(Invoke-ScriptAnalyzer -Path ./dist/CopyPastePowerShell -Recurse -Settings ./PSScriptAnalyzerSettings.psd1)
+          $findings | Format-Table RuleName, Severity, ScriptName, Line, Message -AutoSize -Wrap
+          if ($findings.Count) { throw "PSScriptAnalyzer: $($findings.Count) finding(s) in the package." }
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: CopyPastePowerShell-module
+          path: dist/CopyPastePowerShell
+
+  test:
+    name: Test package (${{ matrix.shell }})
+    needs: package
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shell: [pwsh, powershell]
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: CopyPastePowerShell-module
+          path: dist/CopyPastePowerShell
+      - name: Install Pester
         run: |
           Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
           Install-Module Pester -MinimumVersion 5.5.0 -MaximumVersion 5.99.99 -Scope CurrentUser -Force -SkipPublisherCheck
-          Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
-      - name: Test
-        run: ./tests/run.ps1 -Lint
-      - name: Upload package
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - name: Run the module tests against the package
+        env:
+          CPP_MODULE_DIR: ${{ github.workspace }}/dist/CopyPastePowerShell
+        run: |
+          $config = New-PesterConfiguration
+          $config.Run.Path = './tests/Module.Tests.ps1'
+          $config.Run.Exit = $true
+          $config.Output.Verbosity = 'Detailed'
+          Invoke-Pester -Configuration $config
+
+  publish:
+    name: Publish to the PowerShell Gallery
+    needs: test
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    runs-on: windows-latest
+    environment:
+      name: psgallery
+      url: https://www.powershellgallery.com/packages/CopyPastePowerShell
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Only publish tags that are on main
+        run: |
+          git merge-base --is-ancestor $env:GITHUB_SHA origin/main
+          if ($LASTEXITCODE -ne 0) { throw "Tag $env:VERSION is not on main. Tag a commit on main to publish." }
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: CopyPastePowerShell-module
-          path: module/CopyPastePowerShell
-      - name: Publish to PowerShell Gallery
-        if: github.ref_type == 'tag' && env.PSGALLERY_API_KEY != ''
-        run: Publish-PSResource -Path ./module/CopyPastePowerShell -Repository PSGallery -ApiKey $env:PSGALLERY_API_KEY
+          path: CopyPastePowerShell
+      - name: Publish
+        env:
+          PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
+        run: |
+          if (-not $env:PSGALLERY_API_KEY) { throw 'Set the PSGALLERY_API_KEY secret on the psgallery environment first.' }
+          Publish-PSResource -Path ./CopyPastePowerShell -Repository PSGallery -ApiKey $env:PSGALLERY_API_KEY
