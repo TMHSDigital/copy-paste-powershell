@@ -19,7 +19,7 @@ test("paths, emails, addresses, and IDs never leave the browser", () => {
   const cases = {
     "C:\\Users\\jsmith\\Desktop\\report.xlsx": "<path>",
     "\\\\fileserver01\\share": "<path>",
-    "/home/jsmith/notes.txt": "<path>",
+    "/srv/reports/notes.txt": "<path>",
     "~/Downloads": "<path>",
     "jane.doe@contoso.com": "<email>",
     "10.0.12.7": "<ip>",
