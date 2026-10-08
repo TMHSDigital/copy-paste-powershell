@@ -25,6 +25,7 @@ fields:
     default: false
     explain: "-Recurse also cleans files in subfolders."
   - name: whatIf
+    safety: true
     label: Preview only (-WhatIf)
     type: checkbox
     default: true

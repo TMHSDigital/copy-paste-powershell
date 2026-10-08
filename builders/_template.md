@@ -21,7 +21,7 @@ template: |
 
 Explain what the generated command does. The form above is defined in frontmatter. The site picks up any new file in `builders/`.
 
-Field types: `text`, `number` (with `min` and `max`), `time` (HH:MM), `checkbox`, `select` (with `options`). Add `required: true` to a field that must be filled in, or `requiredWhen: { other: value }` (or a list of values) when it only matters for some choices, for example `requiredWhen: { frequency: [daily, weekly] }` or `requiredWhen: { tcp: true }`.
+Field types: `text`, `number` (with `min` and `max`), `time` (HH:MM), `checkbox`, `select` (with `options`). Add `safety: true` to a checkbox that keeps the script in preview mode (such as **Preview only (-WhatIf)**): a shared link can then never switch it off. Add `required: true` to a field that must be filled in, or `requiredWhen: { other: value }` (or a list of values) when it only matters for some choices, for example `requiredWhen: { frequency: [daily, weekly] }` or `requiredWhen: { tcp: true }`.
 
 Template rules:
 

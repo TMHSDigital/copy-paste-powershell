@@ -31,6 +31,7 @@ fields:
     help: Copy only. Move always takes the whole folder, subfolders included.
     explain: "With Copy, -Recurse copies everything inside the folder, not just the folder itself."
   - name: whatIf
+    safety: true
     label: Preview only (-WhatIf)
     type: checkbox
     default: true

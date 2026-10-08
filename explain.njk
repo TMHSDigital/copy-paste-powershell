@@ -4,6 +4,7 @@ title: Explain a PowerShell command
 description: Paste a PowerShell command you found online and see what each part does, in plain English, with warnings for anything that deletes, downloads, or disables protection. Nothing is run.
 permalink: /explain/
 extraScripts:
+  - /assets/js/explain-risks.js
   - /assets/js/explain.js
 ---
 <article class="prose prose-wide">
@@ -12,6 +13,8 @@ extraScripts:
     <h1>What does this command do?</h1>
     <p class="lede">Paste a line from a forum, a colleague, or an AI chat. You get each step in plain English and a warning for anything risky. <strong>Nothing you paste is run or sent anywhere.</strong></p>
   </header>
+
+  <p id="explain-from-link" class="callout" role="note" hidden><strong>Someone sent you this command in a link.</strong> Read every step below before you run it, and never run a command just because a web page or message told you to, especially one that says it will "verify" or "fix" something.</p>
 
   <label for="explain-input" class="preview-label">PowerShell to explain</label>
   <textarea id="explain-input" class="explain-input" spellcheck="false" autocomplete="off" placeholder="Get-ChildItem -Path .\logs -Recurse -Filter *.tmp | Remove-Item -Force"></textarea>

@@ -29,6 +29,7 @@ fields:
     type: text
     default: "new text"
   - name: apply
+    safety: true
     label: Write the changes (leave off to just list matches)
     type: checkbox
     default: false

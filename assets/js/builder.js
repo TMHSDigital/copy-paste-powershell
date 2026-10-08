@@ -33,10 +33,14 @@
   }
 
   // Shared links restore form state. Values are never trusted: render()
-  // quotes text and rejects selects or numbers that are not allowed.
+  // quotes text and rejects selects or numbers that are not allowed. A link
+  // can never switch off a safety checkbox (safety: true, such as "Preview
+  // only"), and the note lists every field the link changed.
   function applyQuery() {
     const params = new URLSearchParams(window.location.search);
-    let applied = false;
+    const changed = [];
+    let safetyKept = false;
+    let remote = false;
     fields.forEach((field) => {
       if (!params.has(field.name)) {
         return;
@@ -47,17 +51,36 @@
       }
       const value = params.get(field.name);
       if (field.type === "checkbox") {
+        if (field.safety) {
+          safetyKept = safetyKept || (value === "1") !== Boolean(field.default);
+          return;
+        }
         el.checked = value === "1";
       } else if (field.type === "select") {
-        if ((field.options || []).some((o) => String(o.value) === value)) {
-          el.value = value;
+        if (!(field.options || []).some((o) => String(o.value) === value)) {
+          return;
         }
+        el.value = value;
       } else {
         el.value = value;
+        remote = remote || /^(\\\\|\/\/|[a-z][a-z0-9+.-]*:\/\/)/i.test(value.trim());
       }
-      applied = true;
+      if (value !== defaultFor(field)) {
+        changed.push(field.label);
+      }
     });
-    if (applied && sharedNote) {
+    if ((changed.length || safetyKept) && sharedNote) {
+      const extra = [];
+      if (changed.length) {
+        extra.push(`The link set: ${changed.join(", ")}.`);
+      }
+      if (safetyKept) {
+        extra.push("It also tried to turn off the preview. A link cannot do that, so preview is still on; switch it off yourself once you have read the script.");
+      }
+      if (remote) {
+        extra.push("A path points to another computer or a web address. Only keep it if you know and trust that location.");
+      }
+      sharedNote.append(` ${extra.join(" ")}`);
       sharedNote.hidden = false;
     }
   }

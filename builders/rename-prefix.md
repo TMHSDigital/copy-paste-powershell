@@ -23,6 +23,7 @@ fields:
     default: ""
     placeholder: "-final"
   - name: whatIf
+    safety: true
     label: Preview only (-WhatIf)
     type: checkbox
     default: true
